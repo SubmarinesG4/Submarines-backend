@@ -14,9 +14,7 @@ const translationGet = async (event) => {
 			}, 404);
 		}
 		return formatJSONResponse(
-			{
-				translation,
-			},
+			translation,
 			200
 		);
 	} catch (error) {

@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand, QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { environment } from "src/environment/environment";
 import { Translation } from "src/types/Translation";
 
@@ -61,4 +61,25 @@ const getTranslation = async (projectId: string, translationKey: string) => {
 	}
 
 };
-export { putTranslation, getTranslation }
+
+const getAllTranslations = async (projectId: string) => {
+	// Set the parameters.
+	const params: QueryCommandInput = {
+		TableName: environment.dynamo.translations.tableName,
+		KeyConditionExpression: "projectId = :a",
+		ExpressionAttributeValues: {
+			":a": projectId
+		}
+	};
+	try {
+		const data = await ddbDocClient.send(new QueryCommand(params));
+		console.log("Success - GET", data);
+		return data.Items;
+	} catch (err) {
+		console.log("Error", err.stack);
+		throw { err, projectId };
+	}
+
+};
+
+export { putTranslation, getTranslation, getAllTranslations }

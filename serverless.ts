@@ -4,7 +4,8 @@ import { environment } from 'src/environment/environment';
 
 import {
 	translationGet,
-	translationPut
+	translationPut,
+	translationGetAll
 } from "@functions/index";
 
 const serverlessConfiguration: AWS = {
@@ -80,7 +81,7 @@ const serverlessConfiguration: AWS = {
 		}
 	},
 	// import the function via paths
-	functions: { translationGet, translationPut },
+	functions: { translationGet, translationPut, translationGetAll },
 	package: { individually: true },
 	custom: {
 		esbuild: {
