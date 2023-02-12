@@ -1,5 +1,6 @@
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
+import { authorizer } from "src/middleware/validators";
 import { getAllTranslations } from "src/services/dynamodb";
 
 const translationGetAll = async (event) => {
@@ -22,5 +23,5 @@ const translationGetAll = async (event) => {
 };
 
 export const main = middyfy(
-	translationGetAll
+	authorizer(translationGetAll)
 );

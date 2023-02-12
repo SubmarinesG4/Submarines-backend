@@ -1,3 +1,5 @@
+import { formatJSONResponse } from "@libs/api-gateway";
+
 type UseType = "admin" | "viewer";
 
 interface AuthAttributes {
@@ -6,8 +8,7 @@ interface AuthAttributes {
 }
 
 const authorizer = (
-	handler: (event: any, context: any, callback: any) => void,
-	scopes: UseType[]
+	handler: (event: any, context: any, callback: any) => void
 ) => {
 	return (event, context, callback) => {
 		/*  const attributes = event.requestContext.authorizer.claims;
@@ -16,18 +17,17 @@ const authorizer = (
 		   userMail: attributes.email,
 		 };
 		 event.attributes = authAttributes;
-	 
-		 if (!scopes.includes(authAttributes.userType))
-		   return formatJSONResponse(
-			 {
-			   message: "User has not got the required role for this action",
-			 },
-			 403
-		   );
-		 else {
-		   return handler(event, context, callback);
-		 } */
-		return handler(event, context, callback);
+		 */
+		if (event.headers['Authorization'] !== "Bearer test")
+			return formatJSONResponse(
+				{
+					message: "User has not got the required role for this action",
+				},
+				403
+			);
+		else {
+			return handler(event, context, callback);
+		}
 	};
 };
 
