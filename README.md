@@ -13,11 +13,6 @@ Progetto generato usando il template `aws-nodejs-typescript` di [Serverless fram
 A seguito dell'esecuzione di questi comandi verrà avviato una versione di sviluppo utilizzabile in locale dell'applicativo,
 raggiungibile all'indirizzo di base `localhost:3000`
 
-### Using NPM
-
-- Run `npm i` to install the project dependencies
-- Run `npx sls deploy` to deploy this stack to AWS
-
 ### Guida directory
 
 - `serverless.ts` contiene la configurazione del framework
