@@ -5,7 +5,8 @@ import { environment } from 'src/environment/environment';
 import {
 	translationGet,
 	translationPut,
-	translationGetAll
+	translationGetAll,
+	tenantPut
 } from "@functions/index";
 
 const serverlessConfiguration: AWS = {
@@ -63,17 +64,17 @@ const serverlessConfiguration: AWS = {
 					TableName: environment.dynamo.translations.tableName,
 					BillingMode: "PAY_PER_REQUEST",
 					AttributeDefinitions: [{
-						AttributeName: 'projectId',
+						AttributeName: 'tenantId',
 						AttributeType: 'S',
 					}, {
-						AttributeName: 'translationKey',
+						AttributeName: 'KeySort',
 						AttributeType: 'S',
 					}],
 					KeySchema: [{
-						AttributeName: 'projectId',
+						AttributeName: 'tenantId',
 						KeyType: 'HASH',
 					}, {
-						AttributeName: 'translationKey',
+						AttributeName: 'KeySort',
 						KeyType: 'RANGE',
 					}],
 				},
@@ -81,7 +82,7 @@ const serverlessConfiguration: AWS = {
 		}
 	},
 	// import the function via paths
-	functions: { translationGet, translationPut, translationGetAll },
+	functions: { translationGet, translationPut, translationGetAll, tenantPut },
 	package: { individually: true },
 	custom: {
 		esbuild: {
