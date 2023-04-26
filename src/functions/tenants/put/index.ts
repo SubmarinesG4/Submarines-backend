@@ -7,7 +7,7 @@ export default {
 		{
 			http: {
 				method: 'PUT',
-				path: 'tenant/create',
+				path: '{tenantId}',
 				request: {
 					schemas: {
 						"application/json": schema,

@@ -5,16 +5,15 @@ import { putTenant } from 'src/services/dynamodb';
 import { Tenant } from 'src/types/Tenant';
 import schema from './schema';
 
-const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async ({
-	body,
-}) => {
+const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+	const tenantId = event.pathParameters.tenantId as string;
 	const newTenant: Tenant = {
-		tenantId: "TRAD#"+body.tenantId,
-		KeySort: "TENANT#"+body.tenantId,
-		nomeTenant: body.nomeTenant,
-		numeroTraduzioniDisponibili: body.numeroTraduzioniDisponibili,
-		linguaTraduzioneDefault: body.linguaTraduzioneDefault,
-		listaLingueDisponibili: body.listaLingueDisponibili,
+		tenantId: "TRAD#" + tenantId,
+		KeySort: "TENANT#" + tenantId,
+		nomeTenant: event.body.nomeTenant,
+		numeroTraduzioniDisponibili: event.body.numeroTraduzioniDisponibili,
+		linguaTraduzioneDefault: event.body.linguaTraduzioneDefault,
+		listaLingueDisponibili: event.body.listaLingueDisponibili,
 		numeroTraduzioniUsate: 0,
 		token: "",
 		listaUserTenant: []
