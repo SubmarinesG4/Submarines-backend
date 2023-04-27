@@ -6,7 +6,8 @@ import {
 	translationGet,
 	translationPut,
 	translationGetAll,
-	tenantPut
+	tenantPut,
+	inviteUser
 } from "@functions/index";
 
 const serverlessConfiguration: AWS = {
@@ -82,7 +83,7 @@ const serverlessConfiguration: AWS = {
 		}
 	},
 	// import the function via paths
-	functions: { translationGet, translationPut, translationGetAll, tenantPut },
+	functions: { translationGet, translationPut, translationGetAll, tenantPut, inviteUser },
 	package: { individually: true },
 	custom: {
 		esbuild: {
