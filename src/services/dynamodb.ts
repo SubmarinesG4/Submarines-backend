@@ -61,11 +61,11 @@ const putTenant = async (tenant: Tenant) => {
 	}
 };
 
-const getTranslation = async (projectId: string, translationKey: string) => {
+const getTranslation = async (tenantId: string, sortKey: string) => {
 	// Set the parameters.
 	const params: GetCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
-		Key: { projectId, translationKey },
+		Key: { tenantId, sortKey },
 	};
 	try {
 		const data = await ddbDocClient.send(new GetCommand(params));
@@ -73,7 +73,7 @@ const getTranslation = async (projectId: string, translationKey: string) => {
 		return data.Item;
 	} catch (err) {
 		console.log("Error", err.stack);
-		throw { err, projectId };
+		throw { err, tenantId };
 	}
 
 };
@@ -82,7 +82,7 @@ const getAllTranslations = async (projectId: string) => {
 	// Set the parameters.
 	const params: QueryCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
-		KeyConditionExpression: "projectId = :a",
+		KeyConditionExpression: "tenantId = :a",
 		ExpressionAttributeValues: {
 			":a": projectId
 		}
