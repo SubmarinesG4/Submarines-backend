@@ -2,6 +2,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand, QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { environment } from "src/environment/environment";
 import { Translation } from "src/types/Translation";
+import { Tenant } from "src/types/Tenant";
 
 const dbbClient = new DynamoDBClient({
 	credentials: {
@@ -45,11 +46,26 @@ const putTranslation = async (translation: Translation) => {
 	}
 };
 
-const getTranslation = async (projectId: string, translationKey: string) => {
+const putTenant = async (tenant: Tenant) => {
+	// Set the parameters.
+	const params = {
+		TableName: environment.dynamo.translations.tableName,
+		Item: tenant,
+	};
+	try {
+		const data = await ddbDocClient.send(new PutCommand(params));
+		console.log("Success - item added or updated", data);
+	} catch (err) {
+		console.log("Error", err.stack);
+		throw err;
+	}
+};
+
+const getTranslation = async (tenantId: string, sortKey: string) => {
 	// Set the parameters.
 	const params: GetCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
-		Key: { projectId, translationKey },
+		Key: { tenantId, sortKey },
 	};
 	try {
 		const data = await ddbDocClient.send(new GetCommand(params));
@@ -57,7 +73,7 @@ const getTranslation = async (projectId: string, translationKey: string) => {
 		return data.Item;
 	} catch (err) {
 		console.log("Error", err.stack);
-		throw { err, projectId };
+		throw { err, tenantId };
 	}
 
 };
@@ -66,7 +82,7 @@ const getAllTranslations = async (projectId: string) => {
 	// Set the parameters.
 	const params: QueryCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
-		KeyConditionExpression: "projectId = :a",
+		KeyConditionExpression: "tenantId = :a",
 		ExpressionAttributeValues: {
 			":a": projectId
 		}
@@ -82,4 +98,4 @@ const getAllTranslations = async (projectId: string) => {
 
 };
 
-export { putTranslation, getTranslation, getAllTranslations }
+export { putTranslation, getTranslation, getAllTranslations, putTenant }
