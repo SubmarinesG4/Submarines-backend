@@ -26,7 +26,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 			{
 				error: e,
 			},
-			500
+			400
 		);
 	}
 
