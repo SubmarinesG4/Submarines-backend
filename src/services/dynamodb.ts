@@ -3,6 +3,7 @@ import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand, QueryC
 import { environment } from "src/environment/environment";
 import { Translation } from "src/types/Translation";
 import { Tenant } from "src/types/Tenant";
+import { User } from "src/types/User";
 
 const dbbClient = new DynamoDBClient({
 	credentials: {
@@ -98,4 +99,18 @@ const getAllTranslations = async (projectId: string) => {
 
 };
 
-export { putTranslation, getTranslation, getAllTranslations, putTenant }
+const postCreateUser = async (newUser: User) => {
+	const params = {
+		TableName: environment.dynamo.translations.tableName,
+		Item: newUser
+	};
+	try {
+		const data = await ddbDocClient.send(new PutCommand(params));
+		console.log("Success - item added or updated", data);
+	} catch (err) {
+		console.log("Error", err.stack);
+		throw err;
+	}
+};
+
+export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser }
