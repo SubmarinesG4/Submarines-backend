@@ -5,13 +5,19 @@ import { putTranslation } from 'src/services/dynamodb';
 import { Translation } from 'src/types/Translation';
 import schema from './schema';
 
-const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async ({
-	body,
-}) => {
+const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+	const tenantId = event.pathParameters.tenantId as string;
+	const keyTraduzione = event.pathParameters.keyTraduzione as string;
 	const newTranslation: Translation = {
-		projectId: body.projectId,
-		translationKey: body.translationKey,
-		languages: body.languages
+		tenantId: "TRAD#" + tenantId,
+		KeySort: "TRAD#" + tenantId + "#" + keyTraduzione,
+		linguaTraduzioneDefault: event.body.linguaTraduzioneDefault,
+		traduzioneinLinguaDefault: event.body.traduzioneinLinguaDefault,
+		traduzioni: event.body.traduzioni,
+		modificatodaUtente: event.body.modificatodaUtente,
+		dataCreazione: event.body.dataCreazione,
+		dataModifica: event.body.dataModifica,
+		pubblicato: event.body.pubblicato,
 	};
 
 	try {
