@@ -19,8 +19,6 @@ export default {
 			}
 		},		
 		modificatodaUtente: { type: "string"},
-		dataCreazione: {type: "string"},
-		dataModifica: {type: "string"},
 		pubblicato: {type: "boolean"},
 	},
 	required: [
@@ -28,7 +26,6 @@ export default {
 		"traduzioneinLinguaDefault",
 		"traduzioni",
 		"modificatodaUtente",
-		"dataCreazione",
 		"pubblicato",
 	],
 } as const;

@@ -15,8 +15,8 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		traduzioneinLinguaDefault: event.body.traduzioneinLinguaDefault,
 		traduzioni: event.body.traduzioni,
 		modificatodaUtente: event.body.modificatodaUtente,
-		dataCreazione: event.body.dataCreazione,
-		dataModifica: event.body.dataModifica,
+		dataCreazione: new Date().toISOString(),
+		dataModifica: new Date().toISOString(),
 		pubblicato: event.body.pubblicato,
 	};
 
@@ -27,7 +27,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 			{
 				error: e,
 			},
-			500
+			400
 		);
 	}
 

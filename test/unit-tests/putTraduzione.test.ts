@@ -1,14 +1,14 @@
 var request = require('superagent');
 
 describe('Tenant: API PUT', () => {
-
+    /*
     beforeAll(async() => {
         // API DELETE TENANT
     });
 
     afterAll(async() => {
         // API DELETE TENANT
-    });
+    });*/
 
     it('Response ok', async() => {
         const response = await request.put("http://localhost:3000/dev/tenant1/translation/traduzione1")
@@ -27,8 +27,6 @@ describe('Tenant: API PUT', () => {
                     }
                 ],
                 "modificatodaUtente": "utente1",
-                "dataCreazione": "2023-05-02",
-                "dataModifica": "2023-06-02",
                 "pubblicato": false
             });
         expect(response.body).toMatchObject(
@@ -49,8 +47,6 @@ describe('Tenant: API PUT', () => {
                         }
                     ],
                     "modificatodaUtente": "utente1",
-                    "dataCreazione": "2023-05-02",
-                    "dataModifica": "2023-06-02",
                     "pubblicato": false
                 }
             }
@@ -75,8 +71,6 @@ describe('Tenant: API PUT', () => {
                     }
                 ],
                 "modificatodaUtente": "utente1",
-                "dataCreazione": "2023-05-02",
-                "dataModifica": "2023-06-02",
                 "pubblicato": false
             }
         ).catch(err => {
