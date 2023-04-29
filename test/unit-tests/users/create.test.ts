@@ -1,6 +1,6 @@
 var request = require('superagent');
 
-describe('Tenant: API PUT', () => {
+describe('API-createUser', () => {
 
     beforeAll(async() => {
         // API DELETE TENANT
@@ -28,6 +28,7 @@ describe('Tenant: API PUT', () => {
             }
         );
         expect(response.statusCode).toBe(200);
+        // TODO: check if user is in db through getUser API
     });
     
     it('Response NOT ok', async() => {
