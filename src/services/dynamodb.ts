@@ -1,9 +1,10 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand, QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteItemCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand, QueryCommandInput, QueryCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { environment } from "src/environment/environment";
 import { Translation } from "src/types/Translation";
 import { Tenant } from "src/types/Tenant";
 import { User } from "src/types/User";
+import { marshall } from "@aws-sdk/util-dynamodb";
 
 const dbbClient = new DynamoDBClient({
 	credentials: {
@@ -113,4 +114,20 @@ const postCreateUser = async (newUser: User) => {
 	}
 };
 
-export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser }
+const deleteUser = async (id: string, sort: string) => {
+	const params: DeleteCommandInput = {
+		TableName: environment.dynamo.translations.tableName,
+		Key: marshall({ 
+			tenantId: id,
+			KeySort: sort
+		})
+	};
+	try {
+		const res = await ddbDocClient.send(new DeleteItemCommand(params));
+		console.log("Success - item deleted", res);
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser }
