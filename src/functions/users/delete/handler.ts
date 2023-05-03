@@ -6,7 +6,7 @@ import schema from './schema';
 
 const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 	try {
-		const response = await deleteUser("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.KeySort);
+		const response = await deleteUser("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente);
 		return formatJSONResponse(
 				{
 					response

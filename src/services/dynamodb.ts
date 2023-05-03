@@ -1,4 +1,4 @@
-import { DeleteItemCommand, DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
+import { DeleteItemCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand, QueryCommandInput, QueryCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { environment } from "src/environment/environment";
 import { Translation } from "src/types/Translation";
@@ -130,20 +130,19 @@ const deleteUser = async (id: string, sort: string) => {
 	}
 };
 
-const getUser = async (id: string, sort: string) => {
+const getItem = async (tenantId: string, KeySort: string) => {
+	// Set the parameters.
 	const params: GetCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
-		Key: marshall({
-			tenantId: id,
-			KeySort: sort
-		})
+		Key: { tenantId, KeySort },
 	};
 	try {
-		const res = await ddbDocClient.send(new GetItemCommand(params));
-		console.log("Success - GET", res);
+		const data = await ddbDocClient.send(new GetCommand(params));
+		return data.Item;
 	} catch (err) {
-		console.log(err);
+		console.log("Error", err.stack);
+		throw { err, tenantId };
 	}
 };
 
-export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getUser }
+export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getItem }

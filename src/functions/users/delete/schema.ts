@@ -1,7 +1,7 @@
 export default {
     type: "object",
     properties: {
-        KeySort: { type: "string" },
+        emailUtente: { type: "string" },
     },
-    required: ["KeySort"]
+    required: ["emailUtente"]
 } as const;

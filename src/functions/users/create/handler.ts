@@ -8,8 +8,8 @@ import { postCreateUser } from 'src/services/dynamodb';
 const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
     
 	const newUser: User = {
-		tenantId: "TRAD#" + event.pathParameters.NomeTenant,
-		KeySort: "USER#" + event.body.username,
+		tenantId: "TRAD#" + event.pathParameters.tenantId,
+		KeySort: "USER#" + event.body.emailUtente,
 		emailUtente: event.body.emailUtente,
 		username: event.body.username,
 		dataCreazioneUtente: new Date().toISOString()
