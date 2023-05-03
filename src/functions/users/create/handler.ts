@@ -7,6 +7,23 @@ import { getItem, postCreateUser } from 'src/services/dynamodb';
 
 const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
     
+	//! Check if tenant exists
+	try {
+		const tenant = await getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId).then((data) => {
+			return data;
+		});
+		if (!tenant) {
+			return formatJSONResponse(
+				{
+					error: "User already exists",
+				},
+				400
+			);
+		}
+	} catch (e) {
+		console.log("ERROR TRYING TO GET ITEM");
+		console.log(e);
+	}
 
 	//! Check if user already exists
 	try {
