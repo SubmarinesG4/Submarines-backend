@@ -3,10 +3,29 @@ import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
 import schema from './schema';
 import { User } from 'src/types/User';
-import { postCreateUser } from 'src/services/dynamodb';
+import { getItem, postCreateUser } from 'src/services/dynamodb';
 
 const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
     
+
+	//! Check if user already exists
+	try {
+		const user = await getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente).then((data) => {
+			return data;
+		});
+		if (user) {
+			return formatJSONResponse(
+				{
+					error: "User already exists",
+				},
+				400
+			);
+		}
+	} catch (e) {
+		console.log("ERROR TRYING TO GET ITEM");
+		console.log(e);
+	}
+
 	const newUser: User = {
 		tenantId: "TRAD#" + event.pathParameters.tenantId,
 		KeySort: "USER#" + event.body.emailUtente,
