@@ -1,9 +1,9 @@
 export default {
 	type: "object",
 	properties: {
-		projectId: { type: "string" },
-		translationKey: { type: "string" },
-		languages: {
+		linguaTraduzioneDefault: { type: "string"},
+		traduzioneinLinguaDefault: { type: "string"},
+		traduzioni: {
 			type: "array",
 			items: {
 				type: "object",
@@ -17,11 +17,15 @@ export default {
 				},
 				required: ["language", "content"]
 			}
-		}
+		},		
+		modificatodaUtente: { type: "string"},
+		pubblicato: {type: "boolean"},
 	},
 	required: [
-		"projectId",
-		"translationKey",
-		"languages",
+		"linguaTraduzioneDefault",
+		"traduzioneinLinguaDefault",
+		"traduzioni",
+		"modificatodaUtente",
+		"pubblicato",
 	],
 } as const;
