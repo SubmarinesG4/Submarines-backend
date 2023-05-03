@@ -11,12 +11,9 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	//! CHECK IF TENANT EXISTS
 	try {
 		const tenant = await getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId).then((data) => {
-			if (data)
-				return data;
-			else
-				return null;
+			return data;
 		});
-		if (tenant == null) {
+		if (!tenant) {
 			return formatJSONResponse(
 				{
 					error: "Tenant does not exist",
@@ -32,12 +29,9 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	//! CHECK IF USER EXISTS
 	try {
 		const user = await getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.emailUtente).then((data) => {
-			if (data)
-				return data;
-			else
-				return null;
+			return data;
 		});
-		if (user != null) {
+		if (user) {
 			return formatJSONResponse(
 				{
 					error: "User already exists",
