@@ -1,8 +1,7 @@
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
-import { getItem } from "src/services/dynamodb";
-import { Tenant } from "src/types/Tenant";
+import { getItem, getTenantUsers } from "src/services/dynamodb";
 
 const getTenant = async (event) => {
 	const tenantId = event.pathParameters.tenantId;
@@ -23,9 +22,15 @@ const getTenant = async (event) => {
 			400
 		);
 	}
-	console.log(tenant);
-	//! COME FARE PER LA LISTA DEGLI USER? NON HA SENSO API PUT CHE DA LA LISTA DI USER VISTO CHE NON C'E'
-	const response: Tenant = {
+
+	var users;
+	try {
+		users = await getTenantUsers("TRAD#" + tenantId);
+	} catch (error) {
+		console.log("Error", error.stack);
+	}
+	
+	const response = {
 		tenantId: tenant.tenantId,
 		KeySort: tenant.KeySort,
 		nomeTenant: tenant.nomeTenant,
@@ -34,7 +39,7 @@ const getTenant = async (event) => {
 		linguaTraduzioneDefault: tenant.linguaTraduzioneDefault,
 		listaLingueDisponibili: tenant.listaLingueDisponibili,
 		token: tenant.token,
-		listaUserTenant: tenant.listaUserTenant
+		listaUtenti: users
 	}
 	
 	return formatJSONResponse (

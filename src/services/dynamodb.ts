@@ -131,7 +131,6 @@ const deleteUser = async (id: string, sort: string) => {
 };
 
 const getItem = async (tenantId: string, KeySort: string) => {
-	// Set the parameters.
 	const params: GetCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
 		Key: { tenantId, KeySort },
@@ -145,4 +144,26 @@ const getItem = async (tenantId: string, KeySort: string) => {
 	}
 };
 
-export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getItem }
+const getTenantUsers = async (tenantId: string) => {
+	const params: QueryCommandInput = {
+		TableName: environment.dynamo.translations.tableName,
+        KeyConditionExpression: '#tenantId = :pk and begins_with(#KeySort, :sk)',
+        ExpressionAttributeNames: {
+            "#tenantId": "tenantId",
+            "#KeySort": "KeySort"
+        },
+        ExpressionAttributeValues: {
+            ":pk": tenantId,
+            ":sk": "USER#"
+        }
+	}
+	try {
+		const data = await ddbDocClient.send(new QueryCommand(params));
+		return data.Items;
+	} catch (err) {
+		console.log("Error", err.stack);
+		throw { err, tenantId };
+	}
+};
+
+export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getItem, getTenantUsers }
