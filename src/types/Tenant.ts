@@ -1,5 +1,3 @@
-import { User } from 'src/types/User';
-
 interface Tenant {
 	tenantId: string,
 	KeySort: string,
@@ -9,7 +7,6 @@ interface Tenant {
 	linguaTraduzioneDefault: string
 	listaLingueDisponibili: string[]
 	token: string
-	listaUserTenant: User[]
 }
 
 export { Tenant };

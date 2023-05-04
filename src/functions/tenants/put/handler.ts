@@ -16,7 +16,6 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		listaLingueDisponibili: event.body.listaLingueDisponibili,
 		numeroTraduzioniUsate: 0,
 		token: "",
-		listaUserTenant: []
 	};
 
 	try {
