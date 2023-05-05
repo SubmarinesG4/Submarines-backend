@@ -1,12 +1,13 @@
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
-import { getItem, /*getTenantUsers*/ } from "src/services/dynamodb";
+
+import { getItem, getTenantUsers } from "src/services/dynamodb";
 
 export const getTenant = async (event) => {
 	const tenantId = event.pathParameters.tenantId;
 
-	var tenant;
+	var tenant;//: Record<string, any> = {};
 	try {
 		tenant = await getItem("TRAD#" + tenantId, "TENANT#" + tenantId);
 		if (!tenant) {
@@ -22,32 +23,16 @@ export const getTenant = async (event) => {
 			400
 		);
 	}
-/*
 	var users;
 	try {
 		users = await getTenantUsers("TRAD#" + tenantId);
 	} catch (error) {
 		console.log("Error", error.stack);
 	}
-	*/
-	
-	const response = {
-		tenantId: tenant.tenantId,
-		KeySort: tenant.KeySort,
-		nomeTenant: tenant.nomeTenant,
-		numeroTraduzioniDisponibili: tenant.numeroTraduzioniDisponibili,
-		numeroTraduzioniUsate: tenant.numeroTraduzioniUsate,
-		linguaTraduzioneDefault: tenant.linguaTraduzioneDefault,
-		listaLingueDisponibili: tenant.listaLingueDisponibili,
-		token: tenant.token,
-		listaUtenti: []
-	}
-	console.log(tenant);
-	console.log(response);
+	//aggiungo la lista utenti
+	tenant.listaUtenti = users;	
 	return formatJSONResponse (
-		{
-			"tenant": response
-		},
+		tenant,	
 		200
 	);
 };
