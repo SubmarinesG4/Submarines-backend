@@ -1,9 +1,9 @@
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
-import { getItem, getTenantUsers } from "src/services/dynamodb";
+import { getItem, /*getTenantUsers*/ } from "src/services/dynamodb";
 
-const getTenant = async (event) => {
+export const getTenant = async (event) => {
 	const tenantId = event.pathParameters.tenantId;
 
 	var tenant;
@@ -22,13 +22,14 @@ const getTenant = async (event) => {
 			400
 		);
 	}
-
+/*
 	var users;
 	try {
 		users = await getTenantUsers("TRAD#" + tenantId);
 	} catch (error) {
 		console.log("Error", error.stack);
 	}
+	*/
 	
 	const response = {
 		tenantId: tenant.tenantId,
@@ -39,9 +40,10 @@ const getTenant = async (event) => {
 		linguaTraduzioneDefault: tenant.linguaTraduzioneDefault,
 		listaLingueDisponibili: tenant.listaLingueDisponibili,
 		token: tenant.token,
-		listaUtenti: users
+		listaUtenti: []
 	}
-	
+	console.log(tenant);
+	console.log(response);
 	return formatJSONResponse (
 		{
 			"tenant": response

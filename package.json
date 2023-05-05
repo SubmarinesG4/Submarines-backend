@@ -17,6 +17,7 @@
 		"@aws-sdk/lib-dynamodb": "^3.264.0",
 		"@middy/core": "^3.4.0",
 		"@middy/http-json-body-parser": "^3.4.0",
+		"aws-sdk-client-mock": "^2.1.1",
 		"dynamodb-localhost": "github:99x/dynamodb-localhost#db30898f8c40932c7177be7b2f1a81360d12876d",
 		"serverless-dynamodb-local": "^0.2.40",
 		"superagent": "^8.0.9"
