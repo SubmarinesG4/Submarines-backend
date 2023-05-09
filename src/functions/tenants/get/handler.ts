@@ -12,9 +12,7 @@ export const getTenant = async (event) => {
 	try {
 		response = await getItem("TRAD#" + tenantId, "TENANT#" + tenantId);
 		if (!response) {
-			return formatJSONResponse({
-				"message": "Tenant not found"
-			}, 404);
+			return formatJSONResponse({}, 404);
 		}
 	} catch (error) {
 		return formatJSONResponse(
