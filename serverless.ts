@@ -12,6 +12,7 @@ import {
 	createUser,
 	deleteUser,
 	deleteTenant,
+	tenantsGetAll
 } from "@functions/index";
 
 const serverlessConfiguration: AWS = {
@@ -74,6 +75,9 @@ const serverlessConfiguration: AWS = {
 					}, {
 						AttributeName: 'KeySort',
 						AttributeType: 'S',
+					},{
+						AttributeName: 'nomeTenant',
+						AttributeType: 'S',
 					}],
 					KeySchema: [{
 						AttributeName: 'tenantId',
@@ -82,12 +86,25 @@ const serverlessConfiguration: AWS = {
 						AttributeName: 'KeySort',
 						KeyType: 'RANGE',
 					}],
+					GlobalSecondaryIndexes: [{
+						IndexName: 'KeySortIndex', //! TO GET ALL TENANTS
+						KeySchema: [{
+							AttributeName: 'KeySort',
+							KeyType: 'HASH',
+						}, {
+							AttributeName: 'nomeTenant',
+							KeyType: 'RANGE',
+						}],
+						Projection: {
+							ProjectionType: 'ALL',
+						}
+					}]
 				},
 			},
 		}
 	},
 	// import the function via paths
-	functions: { translationGet, translationPut, translationGetAll, tenantPut, getTenant, inviteUser, createUser, deleteUser, deleteTenant },
+	functions: { translationGet, translationPut, translationGetAll, tenantPut, getTenant, inviteUser, createUser, deleteUser, deleteTenant, tenantsGetAll },
 	package: { individually: true },
 	custom: {
 		esbuild: {

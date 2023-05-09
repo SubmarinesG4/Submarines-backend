@@ -7,3 +7,4 @@ export { default as createUser } from './users/create';
 export { default as deleteUser } from './users/delete';
 export { default as getTenant } from './tenants/get';
 export { default as deleteTenant } from './tenants/delete';
+export { default as tenantsGetAll } from './tenants/getAll';
