@@ -166,6 +166,22 @@ const getTenantUsers = async (tenantId: string) => {
 	}
 };
 
+const deleteTenant = async (id: string, sort: string) => {
+	const params: DeleteCommandInput = {
+		TableName: environment.dynamo.translations.tableName,
+		Key: marshall({ 
+			tenantId: id,
+			KeySort: sort
+		})
+	};
+	try {
+		const res = await ddbDocClient.send(new DeleteItemCommand(params));
+		console.log("Success - item deleted", res);
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 const getAllTenants = async () => {
 	const params: ScanCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
@@ -190,4 +206,4 @@ const getAllTenants = async () => {
 
 };
 
-export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getItem, getTenantUsers, getAllTenants }
+export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getItem, getTenantUsers, getAllTenants, deleteTenant }
