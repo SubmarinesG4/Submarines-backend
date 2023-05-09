@@ -28,7 +28,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	//! CHECK IF USER EXISTS
 	try {
-		const user = await getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.emailUtente).then((data) => {
+		const user = await getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.userEmail).then((data) => {
 			return data;
 		});
 		if (user) {

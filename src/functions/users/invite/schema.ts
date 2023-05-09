@@ -1,9 +1,9 @@
 export default {
 	type: "object",
 	properties: {
-		emailUtente: { type: "string" },
+		userEmail: { type: "string" },
 	},
 	required: [
-		"emailUtente"
+		"userEmail"
 	],
 } as const;
