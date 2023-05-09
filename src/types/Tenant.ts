@@ -1,6 +1,6 @@
 interface Tenant {
 	tenantId: string
-	KeySort: string
+	keySort: string
 	tenantName: string
 	numberTranslationAvailable: number
 	numberTranslationUsed: number

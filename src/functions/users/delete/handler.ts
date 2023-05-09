@@ -1,18 +1,17 @@
 import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
-import { deleteUser } from 'src/services/dynamodb';
+import { deleteUser, getItem } from 'src/services/dynamodb';
 import schema from './schema';
 
-const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+const userDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 	try {
-		const response = await deleteUser("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente);
-		return formatJSONResponse(
-				{
-					response
-				},
-				200
-			);
+		const user = await getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.userEmail);
+		if (!user) {
+			return formatJSONResponse({}, 404);
+		}
+		await deleteUser("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.userEmail);
+		return formatJSONResponse({}, 200);
 	} catch (e) {
 		return formatJSONResponse(
 			{
@@ -23,4 +22,4 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 	}
 };
 
-export const main = middyfy(authorizer(tenantPut));
+export const main = middyfy(authorizer(userDelete));

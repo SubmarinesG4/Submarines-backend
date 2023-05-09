@@ -34,9 +34,9 @@ export const getTenant = async (event) => {
 		users = <User[]>JSON.parse(JSON.stringify(jsonUsers));
 		for (let i of users) {
 			delete i.tenantId;
-			delete i.KeySort;
+			delete i.keySort;
 		}
-	} catch (e){
+	} catch (e) {
 		console.log("Error", e.stack);
 	}
 	

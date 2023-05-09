@@ -10,7 +10,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 	const keyTraduzione = event.pathParameters.keyTraduzione as string;
 	const newTranslation: Translation = {
 		tenantId: "TRAD#" + tenantId,
-		KeySort: "TRAD#" + tenantId + "#" + keyTraduzione,
+		keySort: "TRAD#" + tenantId + "#" + keyTraduzione,
 		linguaTraduzioneDefault: event.body.linguaTraduzioneDefault,
 		traduzioneinLinguaDefault: event.body.traduzioneinLinguaDefault,
 		traduzioni: event.body.traduzioni,

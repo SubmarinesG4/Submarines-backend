@@ -73,7 +73,7 @@ const serverlessConfiguration: AWS = {
 						AttributeName: 'tenantId',
 						AttributeType: 'S',
 					}, {
-						AttributeName: 'KeySort',
+						AttributeName: 'keySort',
 						AttributeType: 'S',
 					},{
 						AttributeName: 'nomeTenant',
@@ -83,13 +83,13 @@ const serverlessConfiguration: AWS = {
 						AttributeName: 'tenantId',
 						KeyType: 'HASH',
 					}, {
-						AttributeName: 'KeySort',
+						AttributeName: 'keySort',
 						KeyType: 'RANGE',
 					}],
 					GlobalSecondaryIndexes: [{
-						IndexName: 'KeySortIndex', //! TO GET ALL TENANTS
+						IndexName: 'keySortIndex', //! TO GET ALL TENANTS
 						KeySchema: [{
-							AttributeName: 'KeySort',
+							AttributeName: 'keySort',
 							KeyType: 'HASH',
 						}, {
 							AttributeName: 'nomeTenant',

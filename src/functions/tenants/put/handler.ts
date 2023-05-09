@@ -9,7 +9,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 	const tenantId = event.pathParameters.tenantId as string;
 	const newTenant: Tenant = {
 		tenantId: "TRAD#" + tenantId,
-		KeySort: "TENANT#" + tenantId,
+		keySort: "TENANT#" + tenantId,
 		tenantName: event.body.tenantName,
 		numberTranslationAvailable: event.body.numberTranslationAvailable,
 		defaultTranslationLanguage: event.body.defaultTranslationLanguage,

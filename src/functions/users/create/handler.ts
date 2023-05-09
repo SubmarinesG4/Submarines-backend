@@ -45,7 +45,7 @@ const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	const newUser: User = {
 		tenantId: "TRAD#" + event.pathParameters.tenantId,
-		KeySort: "USER#" + event.body.emailUtente,
+		keySort: "USER#" + event.body.emailUtente,
 		userEmail: event.body.emailUtente,
 		username: event.body.username,
 		creationDate: new Date().toISOString()

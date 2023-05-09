@@ -1,7 +1,7 @@
 
 interface Translation {
 	tenantId: string
-	KeySort: string
+	keySort: string
 	linguaTraduzioneDefault: string
 	traduzioneinLinguaDefault: string
 	traduzioni: { language: string, content: string }[]

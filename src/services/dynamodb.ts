@@ -119,7 +119,7 @@ const deleteUser = async (id: string, sort: string) => {
 		TableName: environment.dynamo.translations.tableName,
 		Key: marshall({ 
 			tenantId: id,
-			KeySort: sort
+			keySort: sort
 		})
 	};
 	try {
@@ -130,10 +130,10 @@ const deleteUser = async (id: string, sort: string) => {
 	}
 };
 
-const getItem = async (tenantId: string, KeySort: string) => {
+const getItem = async (tenantId: string, keySort: string) => {
 	const params: GetCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
-		Key: { tenantId, KeySort },
+		Key: { tenantId, keySort },
 	};
 	try {
 		const data = await ddbDocClient.send(new GetCommand(params));
@@ -147,10 +147,10 @@ const getItem = async (tenantId: string, KeySort: string) => {
 const getTenantUsers = async (tenantId: string) => {
 	const params: QueryCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
-        KeyConditionExpression: '#tenantId = :pk and begins_with(#KeySort, :sk)',
+        KeyConditionExpression: '#tenantId = :pk and begins_with(#keySort, :sk)',
         ExpressionAttributeNames: {
             "#tenantId": "tenantId",
-            "#KeySort": "KeySort"
+            "#keySort": "keySort"
         },
         ExpressionAttributeValues: {
             ":pk": tenantId,
@@ -171,7 +171,7 @@ const deleteTenant = async (id: string, sort: string) => {
 		TableName: environment.dynamo.translations.tableName,
 		Key: marshall({ 
 			tenantId: id,
-			KeySort: sort
+			keySort: sort
 		})
 	};
 	try {
@@ -193,7 +193,7 @@ const getAllTenants = async () => {
 			}
 		},
 		ExpressionAttributeNames: {
-			"#ks": "KeySort"
+			"#ks": "keySort"
 		}
 	};
 	try {
