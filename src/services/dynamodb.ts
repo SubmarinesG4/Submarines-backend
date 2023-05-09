@@ -1,5 +1,5 @@
-import { DeleteItemCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand, QueryCommandInput, QueryCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DeleteItemCommand, DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, GetCommandInput, PutCommand, QueryCommandInput, QueryCommand, DeleteCommandInput, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
 import { environment } from "src/environment/environment";
 import { Translation } from "src/types/Translation";
 import { Tenant } from "src/types/Tenant";
@@ -166,4 +166,28 @@ const getTenantUsers = async (tenantId: string) => {
 	}
 };
 
-export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getItem, getTenantUsers }
+const getAllTenants = async () => {
+	const params: ScanCommandInput = {
+		TableName: environment.dynamo.translations.tableName,
+		ConsistentRead: false,
+		FilterExpression: "begins_with(#ks, :ks)",
+		ExpressionAttributeValues: {
+			":ks": {
+				S: "TENANT#"
+			}
+		},
+		ExpressionAttributeNames: {
+			"#ks": "KeySort"
+		}
+	};
+	try {
+		const data = await ddbDocClient.send(new ScanCommand(params));
+		return data.Items;
+	} catch (err) {
+		console.log("Error", err.stack);
+		throw { err };
+	}
+
+};
+
+export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getItem, getTenantUsers, getAllTenants }
