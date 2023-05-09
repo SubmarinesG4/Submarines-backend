@@ -10,30 +10,34 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 	const newTenant: Tenant = {
 		tenantId: "TRAD#" + tenantId,
 		KeySort: "TENANT#" + tenantId,
-		nomeTenant: event.body.nomeTenant,
-		numeroTraduzioniDisponibili: event.body.numeroTraduzioniDisponibili,
-		linguaTraduzioneDefault: event.body.linguaTraduzioneDefault,
-		listaLingueDisponibili: event.body.listaLingueDisponibili,
-		numeroTraduzioniUsate: 0,
-		token: "",
+		tenantName: event.body.tenantName,
+		numberTranslationAvailable: event.body.numberTranslationAvailable,
+		defaultTranslationLanguage: event.body.defaultTranslationLanguage,
+		listAvailableLanguages: event.body.listAvailableLanguages,
+		numberTranslationUsed: 0,
+		token: "h32c23crn2rcn23jcry2", //! ????????
 	};
 
 	try {
 		await putTenant(newTenant);
 	} catch (e) {
 		return formatJSONResponse(
-			{
-				error: e,
-			},
-			400
+			{ error: e, }, 400
 		);
 	}
 
 	return formatJSONResponse(
 		{
-			newTenant,
+			tenant: {
+				tenantName: newTenant.tenantName,
+				numberTranslationAvailable: newTenant.numberTranslationAvailable,
+				numberTranslationUsed: newTenant.numberTranslationUsed,
+				defaultTranslationLanguage: newTenant.defaultTranslationLanguage,
+				listAvailableLanguages: newTenant.listAvailableLanguages,
+				token: newTenant.token,
+			},
 		},
-		200
+		201
 	);
 };
 

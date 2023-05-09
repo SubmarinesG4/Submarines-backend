@@ -1,9 +1,9 @@
 interface User {
 	tenantId: string
 	KeySort: string
-	emailUtente: string
+	userEmail: string
 	username: string
-	dataCreazioneUtente: string
+	creationDate: string
 }
 
 export { User };

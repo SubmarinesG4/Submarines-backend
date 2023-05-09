@@ -1,38 +1,58 @@
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
-
 import { getItem, getTenantUsers } from "src/services/dynamodb";
+import { User } from "src/types/User";
 
 export const getTenant = async (event) => {
 	const tenantId = event.pathParameters.tenantId;
 
-	var tenant;//: Record<string, any> = {};
+	//* GET TENANT INFO
+	var response;
 	try {
-		tenant = await getItem("TRAD#" + tenantId, "TENANT#" + tenantId);
-		if (!tenant) {
+		response = await getItem("TRAD#" + tenantId, "TENANT#" + tenantId);
+		if (!response) {
 			return formatJSONResponse({
 				"message": "Tenant not found"
 			}, 404);
 		}
 	} catch (error) {
 		return formatJSONResponse(
-			{
-				error,
-			},
-			400
+			{ error }, 400
 		);
 	}
-	var users;
+
+	//* GET USERS
+	var jsonUsers;
 	try {
-		users = await getTenantUsers("TRAD#" + tenantId);
+		jsonUsers = await getTenantUsers("TRAD#" + tenantId);
 	} catch (error) {
 		console.log("Error", error.stack);
 	}
-	//aggiungo la lista utenti
-	tenant.listaUtenti = users;	
+	
+	//* REMOVE KEYSORT AND TENANTID FROM USERS
+	var users;
+	try {
+		users = <User[]>JSON.parse(JSON.stringify(jsonUsers));
+		for (let i of users) {
+			delete i.tenantId;
+			delete i.KeySort;
+		}
+	} catch (e){
+		console.log("Error", e.stack);
+	}
+	
+	//* CREATE AND RETURN OBJECT
 	return formatJSONResponse (
-		tenant,	
+		{
+			tenantName: response.tenantName,
+			numberTranslationAvailable: response.numberTranslationAvailable,
+			numberTranslationUsed: response.numberTranslationUsed,
+			defaultTranslationLanguage: response.defaultTranslationLanguage,
+			listAvailableLanguages: response.listAvailableLanguages,
+			token: response.token,
+			userList: users
+		},	
 		200
 	);
 };

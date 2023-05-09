@@ -1,10 +1,10 @@
 export default {
 	type: "object",
 	properties: {
-		nomeTenant: { type: "string" },
-		numeroTraduzioniDisponibili: { type: "number" },
-		linguaTraduzioneDefault: { type: "string" },
-		listaLingueDisponibili: {
+		tenantName: { type: "string" },
+		numberTranslationAvailable: { type: "number" },
+		defaultTranslationLanguage: { type: "string" },
+		listAvailableLanguages: {
 			type: "array",
 			items: {
 				type: "string"
@@ -12,9 +12,9 @@ export default {
 		}
 	},
 	required: [
-		"nomeTenant",
-		"numeroTraduzioniDisponibili",
-		"linguaTraduzioneDefault",
-		"listaLingueDisponibili"
+		"tenantName",
+		"numberTranslationAvailable",
+		"defaultTranslationLanguage",
+		"listAvailableLanguages"
 	],
 } as const;
