@@ -1,7 +1,7 @@
 import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
-import { putTenant } from 'src/services/dynamodb';
+import { getItem, putTenant } from 'src/services/dynamodb';
 import { Tenant } from 'src/types/Tenant';
 import schema from './schema';
 
@@ -18,7 +18,9 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		token: "h32c23crn2rcn23jcry2", //! ????????
 	};
 
+	var tenant;
 	try {
+		tenant = await getItem(newTenant.tenantId, newTenant.keySort);
 		await putTenant(newTenant);
 	} catch (e) {
 		return formatJSONResponse(
@@ -28,16 +30,15 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 
 	return formatJSONResponse(
 		{
-			tenant: {
-				tenantName: newTenant.tenantName,
-				numberTranslationAvailable: newTenant.numberTranslationAvailable,
-				numberTranslationUsed: newTenant.numberTranslationUsed,
-				defaultTranslationLanguage: newTenant.defaultTranslationLanguage,
-				listAvailableLanguages: newTenant.listAvailableLanguages,
-				token: newTenant.token,
-			},
+			tenantName: newTenant.tenantName,
+			numberTranslationAvailable: newTenant.numberTranslationAvailable,
+			defaultTranslationLanguage: newTenant.defaultTranslationLanguage,
+			listAvailableLanguages: newTenant.listAvailableLanguages,
+			numberTranslationUsed: newTenant.numberTranslationUsed,
+			token: newTenant.token,
+			userList: []
 		},
-		201
+		(tenant) ? 200 : 201
 	);
 };
 
