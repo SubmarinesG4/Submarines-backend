@@ -22,12 +22,13 @@ beforeEach(() => {
     ddbMock.reset();
 });
 
-const rightreponse = "{\"tenant\":{\"tenantId\":\"TRAD#tenant1\",\"keySort\":\"TENANT#tenant1\",\"tenantName\":\"tenant1\",\"numberTranslationAvailable\":1000,\"numberTranslationUsed\":0,\"defaultTranslationLanguage\":\"en\",\"listAvailableLanguages\":[\"en\",\"it\"],\"token\":\"\"},\"userList\":[{\"tenantId\":\"TRAD#tenant1\",\"keySort\":\"USER#utente1\",\"userEmail\":\"emailutente1@gmail.com\",\"username\":\"userutente1\"}]}"
+const rightreponse =
+"{\"tenantName\":\"tenant1\",\"numberTranslationAvailable\":1000,\"numberTranslationUsed\":0,\"defaultTranslationLanguage\":\"en\",\"listAvailableLanguages\":[\"en\",\"it\"],\"token\":\"\",\"userList\":[{\"userEmail\":\"emailutente1@gmail.com\",\"username\":\"userutente1\",\"creationDate\":\"data\"}]}";
 
 
-describe('Unit test for app handler', function () {
+describe('Unit test getTenant', function () {
 
-    it('verify happy path 200', async () => {
+    it('Verify get with success 200', async () => {
 
         process.env.DYNAMODB_TABLE_NAME = environment.dynamo.translations.tableName;
         ddbMock.on(GetCommand, {
@@ -38,19 +39,17 @@ describe('Unit test for app handler', function () {
             },
         }).resolves({
             "Item": {
-                "tenant": {
-                    "tenantId": "TRAD#tenant1",
-                    "keySort": "TENANT#tenant1",
-                    "tenantName": "tenant1",
-                    "numberTranslationAvailable": 1000,
-                    "numberTranslationUsed": 0,
-                    "defaultTranslationLanguage": "en",
-                    "listAvailableLanguages": [
-                        "en",
-                        "it"
-                    ],
-                    "token": "",
-                }
+                "tenantId": "TRAD#tenant1",
+                "keySort": "TENANT#tenant1",
+                "tenantName": "tenant1",
+                "numberTranslationAvailable": 1000,
+                "numberTranslationUsed": 0,
+                "defaultTranslationLanguage": "en",
+                "listAvailableLanguages": [
+                    "en",
+                    "it"
+                ],
+                "token": "",
             }
         })
         .on(QueryCommand,{
@@ -66,7 +65,7 @@ describe('Unit test for app handler', function () {
             }
         },)
         .resolves({
-            Items: [{tenantId: 'TRAD#tenant1', keySort: 'USER#utente1', userEmail: "emailutente1@gmail.com", username: "userutente1"}], 
+            Items: [{tenantId: 'TRAD#tenant1', keySort: 'USER#utente1', userEmail: "emailutente1@gmail.com", username: "userutente1", creationDate: 'data'}], 
         });
         const result: APIGatewayProxyResult = await getTenant(eventJSON);
         expect(result.statusCode).toEqual(200);

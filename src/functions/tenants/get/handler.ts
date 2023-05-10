@@ -45,12 +45,12 @@ export const getTenant = async (event) => {
 		{
 			tenantName: response.tenantName,
 			numberTranslationAvailable: response.numberTranslationAvailable,
-			numberTranslationUsed: response.numberTranslationUsed,
-			defaultTranslationLanguage: response.defaultTranslationLanguage,
-			listAvailableLanguages: response.listAvailableLanguages,
-			token: response.token,
+            numberTranslationUsed: response.numberTranslationUsed,
+            defaultTranslationLanguage: response.defaultTranslationLanguage,
+            listAvailableLanguages: response.listAvailableLanguages,
+            token: response.token,
 			userList: users
-		},	
+		},
 		200
 	);
 };

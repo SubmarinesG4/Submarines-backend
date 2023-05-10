@@ -27,7 +27,7 @@ const errorreponse = "{}";
 
 describe('Unit test deleteTenant', function () {
 
-    it('verify delete with success 200', async () => {
+    it('Verify delete with success 200', async () => {
 
         process.env.DYNAMODB_TABLE_NAME = environment.dynamo.translations.tableName;
         ddbMock.on(GetCommand, {
