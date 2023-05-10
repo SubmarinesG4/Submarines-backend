@@ -114,22 +114,6 @@ const postCreateUser = async (newUser: User) => {
 	}
 };
 
-const deleteUser = async (id: string, sort: string) => {
-	const params: DeleteCommandInput = {
-		TableName: environment.dynamo.translations.tableName,
-		Key: marshall({ 
-			tenantId: id,
-			keySort: sort
-		})
-	};
-	try {
-		const res = await ddbDocClient.send(new DeleteItemCommand(params));
-		console.log("Success - item deleted", res);
-	} catch (err) {
-		console.log(err);
-	}
-};
-
 const getItem = async (tenantId: string, keySort: string) => {
 	const params: GetCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
@@ -166,22 +150,6 @@ const getTenantUsers = async (tenantId: string) => {
 	}
 };
 
-const deleteTenant = async (id: string, sort: string) => {
-	const params: DeleteCommandInput = {
-		TableName: environment.dynamo.translations.tableName,
-		Key: marshall({ 
-			tenantId: id,
-			keySort: sort
-		})
-	};
-	try {
-		const res = await ddbDocClient.send(new DeleteItemCommand(params));
-		console.log("Success - item deleted", res);
-	} catch (err) {
-		console.log(err);
-	}
-};
-
 const getAllTenants = async () => {
 	const params: ScanCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
@@ -203,7 +171,22 @@ const getAllTenants = async () => {
 		console.log("Error", err.stack);
 		throw { err };
 	}
-
 };
 
-export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteUser, getItem, getTenantUsers, getAllTenants, deleteTenant }
+const deleteItem = async (id: string, sort: string) => {
+	const params: DeleteCommandInput = {
+		TableName: environment.dynamo.translations.tableName,
+		Key: marshall({ 
+			tenantId: id,
+			keySort: sort
+		})
+	};
+	try {
+		const res = await ddbDocClient.send(new DeleteItemCommand(params));
+		console.log("Success - item deleted", res);
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+export { putTranslation, getTranslation, getAllTranslations, putTenant, postCreateUser, deleteItem, getItem, getTenantUsers, getAllTenants }
