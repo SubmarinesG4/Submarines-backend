@@ -1,6 +1,7 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { getTenant } from '../../../src/functions/tenants/get/handler';
 import { eventJSON } from '../../../events/getTenantEvent';
+
 import { mockClient } from "aws-sdk-client-mock";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
@@ -21,7 +22,7 @@ beforeEach(() => {
     ddbMock.reset();
 });
 
-const rightreponse = "{\"tenant\":{\"tenantId\":\"TRAD#tenant1\",\"KeySort\":\"TENANT#tenant1\",\"nomeTenant\":\"tenant1\",\"numeroTraduzioniDisponibili\":1000,\"numeroTraduzioniUsate\":0,\"linguaTraduzioneDefault\":\"en\",\"listaLingueDisponibili\":[\"en\",\"it\"],\"token\":\"\"},\"listaUtenti\":[{\"tenantId\":\"TRAD#tenant1\",\"KeySort\":\"USER#utente1\",\"email\":\"emailutente1@gmail.com\",\"username\":\"userutente1\"}]}"
+const rightreponse = "{\"tenant\":{\"tenantId\":\"TRAD#tenant1\",\"keySort\":\"TENANT#tenant1\",\"tenantName\":\"tenant1\",\"numberTranslationAvailable\":1000,\"numberTranslationUsed\":0,\"defaultTranslationLanguage\":\"en\",\"listAvailableLanguages\":[\"en\",\"it\"],\"token\":\"\"},\"userList\":[{\"tenantId\":\"TRAD#tenant1\",\"keySort\":\"USER#utente1\",\"userEmail\":\"emailutente1@gmail.com\",\"username\":\"userutente1\"}]}"
 
 
 describe('Unit test for app handler', function () {
@@ -33,18 +34,18 @@ describe('Unit test for app handler', function () {
             TableName: environment.dynamo.translations.tableName,
             Key: {
                 tenantId: "TRAD#tenant1",
-                KeySort: "TENANT#tenant1",
+                keySort: "TENANT#tenant1",
             },
-          }).resolves({
+        }).resolves({
             "Item": {
                 "tenant": {
                     "tenantId": "TRAD#tenant1",
-                    "KeySort": "TENANT#tenant1",
-                    "nomeTenant": "tenant1",
-                    "numeroTraduzioniDisponibili": 1000,
-                    "numeroTraduzioniUsate": 0,
-                    "linguaTraduzioneDefault": "en",
-                    "listaLingueDisponibili": [
+                    "keySort": "TENANT#tenant1",
+                    "tenantName": "tenant1",
+                    "numberTranslationAvailable": 1000,
+                    "numberTranslationUsed": 0,
+                    "defaultTranslationLanguage": "en",
+                    "listAvailableLanguages": [
                         "en",
                         "it"
                     ],
@@ -54,19 +55,18 @@ describe('Unit test for app handler', function () {
         })
         .on(QueryCommand,{
             TableName: environment.dynamo.translations.tableName,
-            KeyConditionExpression: '#tenantId = :pk and begins_with(#KeySort, :sk)',
+            KeyConditionExpression: '#tenantId = :pk and begins_with(#keySort, :sk)',
             ExpressionAttributeNames: {
                 "#tenantId": "tenantId",
-                "#KeySort": "KeySort"
+                "#keySort": "keySort"
             },
             ExpressionAttributeValues: {
                 ":pk":  "TRAD#tenant1",
                 ":sk": "USER#"
             }
-         },
-        )
+        },)
         .resolves({
-            Items: [{tenantId: 'TRAD#tenant1', KeySort: 'USER#utente1', email: "emailutente1@gmail.com", username: "userutente1"}], 
+            Items: [{tenantId: 'TRAD#tenant1', keySort: 'USER#utente1', userEmail: "emailutente1@gmail.com", username: "userutente1"}], 
         });
         const result: APIGatewayProxyResult = await getTenant(eventJSON);
         expect(result.statusCode).toEqual(200);

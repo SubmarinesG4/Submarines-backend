@@ -21,8 +21,8 @@ beforeEach(() => {
     ddbMock.reset();
 });
 
-const rightreponse = "{\"response\":\"Tenant eliminato con successo\"}";
-const errorreponse = "{\"response\":\"Tenant not found, eliminazione fallita\"}";
+const rightreponse = "{}";
+const errorreponse = "{}";
 
 
 describe('Unit test deleteTenant', function () {
@@ -34,18 +34,18 @@ describe('Unit test deleteTenant', function () {
             TableName: environment.dynamo.translations.tableName,
             Key: {
                 tenantId: "TRAD#tenant1",
-                KeySort: "TENANT#tenant1",
+                keySort: "TENANT#tenant1",
             },
-          }).resolves({
+        }).resolves({
             "Item": {
                 "tenant": {
                     "tenantId": "TRAD#tenant1",
-                    "KeySort": "TENANT#tenant1",
-                    "nomeTenant": "tenant1",
-                    "numeroTraduzioniDisponibili": 1000,
-                    "numeroTraduzioniUsate": 0,
-                    "linguaTraduzioneDefault": "en",
-                    "listaLingueDisponibili": [
+                    "keySort": "TENANT#tenant1",
+                    "tenantName": "tenant1",
+                    "numberTranslationAvailable": 1000,
+                    "numberTranslationUsed": 0,
+                    "defaultTranslationLanguage": "en",
+                    "listAvailableLanguages": [
                         "en",
                         "it"
                     ],
@@ -55,25 +55,24 @@ describe('Unit test deleteTenant', function () {
         })
         .on(QueryCommand,{
             TableName: environment.dynamo.translations.tableName,
-            KeyConditionExpression: '#tenantId = :pk and begins_with(#KeySort, :sk)',
+            KeyConditionExpression: '#tenantId = :pk and begins_with(#keySort, :sk)',
             ExpressionAttributeNames: {
                 "#tenantId": "tenantId",
-                "#KeySort": "KeySort"
+                "#keySort": "keySort"
             },
             ExpressionAttributeValues: {
                 ":pk":  "TRAD#tenant1",
                 ":sk": "USER#"
             }
-         },
-        )
+        },)
         .resolves({
-            Items: [{tenantId: 'TRAD#tenant1', KeySort: 'USER#utente1', email: "emailutente1@gmail.com", username: "userutente1"}], 
+            Items: [{tenantId: 'TRAD#tenant1', keySort: 'USER#utente1', email: "emailutente1@gmail.com", username: "userutente1"}], 
         })
         .on(DeleteCommand,{
             TableName: environment.dynamo.translations.tableName,
             Key: {
                 tenantId: "TRAD#tenant1",
-                KeySort: "TENANT#tenant1",
+                keySort: "TENANT#tenant1",
             },
         })
         .resolves({
@@ -91,32 +90,31 @@ describe('Unit test deleteTenant', function () {
             TableName: environment.dynamo.translations.tableName,
             Key: {
                 tenantId: "TRAD#tenant1",
-                KeySort: "TENANT#tenant1",
+                keySort: "TENANT#tenant1",
             },
-          }).resolves({
+        }).resolves({
             
         })
         .on(QueryCommand,{
             TableName: environment.dynamo.translations.tableName,
-            KeyConditionExpression: '#tenantId = :pk and begins_with(#KeySort, :sk)',
+            KeyConditionExpression: '#tenantId = :pk and begins_with(#keySort, :sk)',
             ExpressionAttributeNames: {
                 "#tenantId": "tenantId",
-                "#KeySort": "KeySort"
+                "#keySort": "keySort"
             },
             ExpressionAttributeValues: {
                 ":pk":  "TRAD#tenant1",
                 ":sk": "USER#"
             }
-         },
-        )
+        },)
         .resolves({
-             
+
         })
         .on(DeleteCommand,{
             TableName: environment.dynamo.translations.tableName,
             Key: {
                 tenantId: "TRAD#tenant1",
-                KeySort: "TENANT#tenant1",
+                keySort: "TENANT#tenant1",
             },
         })
         .resolves({
