@@ -15,7 +15,7 @@ const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		if (!tenant) {
 			return formatJSONResponse(
 				{
-					error: "User already exists",
+					error: "Tenant does not exist",
 				},
 				400
 			);
