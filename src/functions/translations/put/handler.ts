@@ -1,12 +1,13 @@
 import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
-import { putTranslation } from 'src/services/dynamodb';
-import { Translation } from 'src/types/Translation';
+//import { putTranslation } from 'src/services/dynamodb';
+//import { Translation } from 'src/types/Translation';
 import schema from './schema';
 
 const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	const tenantId = event.pathParameters.tenantId as string;
+	event
+	/*const tenantId = event.pathParameters.tenantId as string;
 	const keyTraduzione = event.pathParameters.keyTraduzione as string;
 	const newTranslation: Translation = {
 		tenantId: "TRAD#" + tenantId,
@@ -37,6 +38,8 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		},
 		200
 	);
+	*/
+	return formatJSONResponse({});
 };
 
 export const main = middyfy(authorizer(tranlsationPut));
