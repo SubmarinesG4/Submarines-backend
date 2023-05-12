@@ -1,11 +1,14 @@
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
-import { getAllTenants } from "src/services/dynamodb";
+import { DyanmoDBHandler } from "src/services/dynamoDBHandler";
 
 const tenantsGetAll = async () => {
+
+	const dynamo = DyanmoDBHandler.getInstance();
+
 	try {
-		const result = await getAllTenants()
+		const result = await dynamo.getAllTenants();
 		return formatJSONResponse(
 			{ tenants: result },
 			200

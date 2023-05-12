@@ -2,15 +2,16 @@ import { ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from '@libs/ap
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
 import schema from './schema';
-import { getItem } from 'src/services/dynamodb';
+import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
 
 const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
     const invitedUser = event.body;
+	const dynamo = DyanmoDBHandler.getInstance();
 
 	//! CHECK IF TENANT EXISTS
 	try {
-		const tenant = await getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId).then((data) => {
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId).then((data) => {
 			return data;
 		});
 		if (!tenant) {
@@ -28,7 +29,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	//! CHECK IF USER EXISTS
 	try {
-		const user = await getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.userEmail).then((data) => {
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.userEmail).then((data) => {
 			return data;
 		});
 		if (user) {
