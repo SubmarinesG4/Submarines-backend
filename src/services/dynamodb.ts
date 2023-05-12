@@ -132,6 +132,7 @@ const getTenantUsers = async (tenantId: string) => {
 	const params: QueryCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
         KeyConditionExpression: '#tenantId = :pk and begins_with(#keySort, :sk)',
+		ProjectionExpression: "userEmail, username, creationDate",
         ExpressionAttributeNames: {
             "#tenantId": "tenantId",
             "#keySort": "keySort"
@@ -154,6 +155,7 @@ const getAllTenants = async () => {
 	const params: ScanCommandInput = {
 		TableName: environment.dynamo.translations.tableName,
 		ConsistentRead: false,
+		ProjectionExpression: "tenantName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage, listAvailableLanguages, #tk",
 		FilterExpression: "begins_with(#ks, :ks)",
 		ExpressionAttributeValues: {
 			":ks": {
@@ -161,7 +163,8 @@ const getAllTenants = async () => {
 			}
 		},
 		ExpressionAttributeNames: {
-			"#ks": "keySort"
+			"#ks": "keySort",
+			"#tk": "token"
 		}
 	};
 	try {

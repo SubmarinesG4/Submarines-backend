@@ -2,7 +2,6 @@ import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
 import { getItem, getTenantUsers } from "src/services/dynamodb";
-import { User } from "src/types/User";
 
 export const getTenant = async (event) => {
 	const tenantId = event.pathParameters.tenantId;
@@ -21,23 +20,11 @@ export const getTenant = async (event) => {
 	}
 
 	//* GET USERS
-	var jsonUsers;
-	try {
-		jsonUsers = await getTenantUsers("TRAD#" + tenantId);
-	} catch (error) {
-		console.log("Error", error.stack);
-	}
-	
-	//* REMOVE KEYSORT AND TENANTID FROM USERS
 	var users;
 	try {
-		users = <User[]>JSON.parse(JSON.stringify(jsonUsers));
-		for (let i of users) {
-			delete i.tenantId;
-			delete i.keySort;
-		}
-	} catch (e) {
-		console.log("Error", e.stack);
+		users = await getTenantUsers("TRAD#" + tenantId);
+	} catch (error) {
+		console.log("Error", error.stack);
 	}
 	
 	//* CREATE AND RETURN OBJECT

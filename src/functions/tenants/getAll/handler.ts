@@ -5,9 +5,9 @@ import { getAllTenants } from "src/services/dynamodb";
 
 const tenantsGetAll = async () => {
 	try {
-		const translations = await getAllTenants()
+		const result = await getAllTenants()
 		return formatJSONResponse(
-			{ tenants: translations },
+			{ tenants: result },
 			200
 		);
 	} catch (error) {
