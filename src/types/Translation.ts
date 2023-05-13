@@ -1,14 +1,20 @@
-
 interface Translation {
 	tenantId: string
 	keySort: string
-	linguaTraduzioneDefault: string
-	traduzioneinLinguaDefault: string
-	traduzioni: { language: string, content: string }[]
-	modificatodaUtente: string
-	dataCreazione: string
-	dataModifica: string
-	pubblicato: boolean;
+	defaultTranslationLanguage: string
+	defaultTranslationinLanguage: string
+	translations: { language: string, content: string }[]
+	creationDate: string
+	modificationDate: string
+	modifiedbyUser: string
+	published: boolean;
+	versionedTranslations: Version[]
 }
 
-export { Translation };
+interface Version {
+	modificationDate: string,
+	modifiedbyUser: string,
+	translations: { language: string, content: string }[]
+}
+
+export { Translation, Version };

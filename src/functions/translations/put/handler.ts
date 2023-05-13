@@ -1,42 +1,76 @@
 import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
-import { putTranslation } from 'src/services/dynamodb';
-import { Translation } from 'src/types/Translation';
+//import { putTranslation } from 'src/services/dynamodb';
+import { Translation, Version } from 'src/types/Translation';
 import schema from './schema';
+import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
 
 const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	const tenantId = event.pathParameters.tenantId as string;
-	const keyTraduzione = event.pathParameters.keyTraduzione as string;
-	const newTranslation: Translation = {
-		tenantId: "TRAD#" + tenantId,
-		keySort: "TRAD#" + tenantId + "#" + keyTraduzione,
-		linguaTraduzioneDefault: event.body.linguaTraduzioneDefault,
-		traduzioneinLinguaDefault: event.body.traduzioneinLinguaDefault,
-		traduzioni: event.body.traduzioni,
-		modificatodaUtente: event.body.modificatodaUtente,
-		dataCreazione: new Date().toISOString(),
-		dataModifica: new Date().toISOString(),
-		pubblicato: event.body.pubblicato,
+
+	let newTranslation: Translation = {
+		tenantId: "TRAD#" + event.pathParameters.tenantId,
+		keySort: "TRAD#" + event.pathParameters.tenantId + "#" + event.pathParameters.translationKey,
+		defaultTranslationLanguage: event.body.defaultTranslationLanguage,
+		defaultTranslationinLanguage: event.body.defaultTranslationinLanguage,
+		translations: event.body.translations,
+		creationDate: new Date().toISOString(),
+		modificationDate: new Date().toISOString(),
+		modifiedbyUser: event.body.modifiedbyUser,
+		published: event.body.published,
+		versionedTranslations: []
+	}
+	const newVersion: Version = {
+		modificationDate: newTranslation.creationDate,
+		modifiedbyUser: newTranslation.modifiedbyUser,
+		translations: newTranslation.translations
 	};
 
+	const dynamo = DyanmoDBHandler.getInstance();
+
+	//* Controlla se esiste il tenant
 	try {
-		await putTranslation(newTranslation);
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId);
+		if (!tenant) {
+			return formatJSONResponse({ error: "Tenant not found" }, 400);
+		}
 	} catch (e) {
-		return formatJSONResponse(
-			{
-				error: e,
-			},
-			400
-		);
+		return formatJSONResponse({ error: e }, 400);
 	}
 
-	return formatJSONResponse(
-		{
-			newTranslation,
-		},
-		200
-	);
+	//* Controlla se esiste l'utente
+	try {
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.modifiedbyUser);
+		if (!user) {
+			return formatJSONResponse({ error: "User not found" }, 400);
+		}
+	} catch (e) {
+		return formatJSONResponse({ error: e }, 400);
+	}
+
+	let jsonTranslation;
+	try {
+
+		let versions: Array<Version> = [];
+
+		//* Controlla se esiste già la traduzione (cioè è da modificare)
+		jsonTranslation = await dynamo.getItem(newTranslation.tenantId, newTranslation.keySort);
+		if (jsonTranslation) {
+			const old = await <Translation>JSON.parse(JSON.stringify(jsonTranslation));		//* Vecchio oggetto
+			newTranslation.creationDate = old.creationDate;								//* La data di creazione non cambia
+			versions = old.versionedTranslations;									//* Prende le versioni precedenti
+			if (versions.length == 5)												//* Se sono 5 elimina la più vecchia (prima nell'array)
+				versions.shift();
+		}
+		versions.push(newVersion);													//* Aggiunge la nuova versione
+		newTranslation.versionedTranslations = versions;							//* Aggiorna l'oggetto
+
+		await dynamo.putItem(newTranslation);
+	} catch (e) {
+		return formatJSONResponse({ error: e }, 400);
+	}
+
+	return formatJSONResponse({ newTranslation }, jsonTranslation ? 200 : 201);
 };
 
 export const main = middyfy(authorizer(tranlsationPut));

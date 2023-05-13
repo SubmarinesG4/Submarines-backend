@@ -1,10 +1,11 @@
-import { formatJSONResponse } from "@libs/api-gateway";
+//import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
-import { getTranslation } from "src/services/dynamodb";
+//import { getTranslation } from "src/services/dynamodb";
 
 const translationGet = async (event) => {
-	const projectId = event.pathParameters.projectId as string;
+	event
+	/*const projectId = event.pathParameters.projectId as string;
 	const translationKey = event.pathParameters.translationKey as string;
 
 	try {
@@ -25,7 +26,7 @@ const translationGet = async (event) => {
 			},
 			400
 		);
-	}
+	}*/
 };
 
 export const main = middyfy(

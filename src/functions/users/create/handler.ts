@@ -3,13 +3,15 @@ import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
 import schema from './schema';
 import { User } from 'src/types/User';
-import { getItem, postCreateUser } from 'src/services/dynamodb';
+import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
 
 const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
     
+	const dynamo = DyanmoDBHandler.getInstance();
+
 	//! Check if tenant exists
 	try {
-		const tenant = await getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId).then((data) => {
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId).then((data) => {
 			return data;
 		});
 		if (!tenant) {
@@ -27,7 +29,7 @@ const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	//! Check if user already exists
 	try {
-		const user = await getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente).then((data) => {
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente).then((data) => {
 			return data;
 		});
 		if (user) {
@@ -52,7 +54,7 @@ const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	}
 
 	try {
-		postCreateUser(newUser);
+		dynamo.putItem(newUser);
 	} catch (e) {
 		return formatJSONResponse(
 			{

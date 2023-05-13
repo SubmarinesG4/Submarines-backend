@@ -7,7 +7,7 @@ export default {
 		{
 			http: {
 				method: 'PUT',
-				path: '{tenantId}/translation/{keyTraduzione}',
+				path: '{tenantId}/translation/{translationKey}',
 				request: {
 					schemas: {
 						"application/json": schema,

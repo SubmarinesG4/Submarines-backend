@@ -1,9 +1,9 @@
 export default {
 	type: "object",
 	properties: {
-		linguaTraduzioneDefault: { type: "string"},
-		traduzioneinLinguaDefault: { type: "string"},
-		traduzioni: {
+		defaultTranslationLanguage: { type: "string"},
+		defaultTranslationinLanguage: { type: "string"},
+		translations: {
 			type: "array",
 			items: {
 				type: "object",
@@ -17,15 +17,15 @@ export default {
 				},
 				required: ["language", "content"]
 			}
-		},		
-		modificatodaUtente: { type: "string"},
-		pubblicato: {type: "boolean"},
+		},
+		modifiedbyUser: { type: "string"},
+		published: { type: "boolean"},
 	},
 	required: [
-		"linguaTraduzioneDefault",
-		"traduzioneinLinguaDefault",
-		"traduzioni",
-		"modificatodaUtente",
-		"pubblicato",
+		"defaultTranslationLanguage",
+		"defaultTranslationinLanguage",
+		"translations",
+		"modifiedbyUser",
+		"published"
 	],
 } as const;

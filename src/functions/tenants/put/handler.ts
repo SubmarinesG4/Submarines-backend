@@ -1,11 +1,14 @@
 import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
-import { getItem, putTenant } from 'src/services/dynamodb';
 import { Tenant } from 'src/types/Tenant';
 import schema from './schema';
+import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
 
 const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+
+	const dynamo = DyanmoDBHandler.getInstance();
+
 	const tenantId = event.pathParameters.tenantId as string;
 	const newTenant: Tenant = {
 		tenantId: "TRAD#" + tenantId,
@@ -20,8 +23,8 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 
 	var tenant;
 	try {
-		tenant = await getItem(newTenant.tenantId, newTenant.keySort);
-		await putTenant(newTenant);
+		tenant = await dynamo.getItem(newTenant.tenantId, newTenant.keySort);
+		await dynamo.putItem(newTenant);
 	} catch (e) {
 		return formatJSONResponse(
 			{ error: e, }, 400
