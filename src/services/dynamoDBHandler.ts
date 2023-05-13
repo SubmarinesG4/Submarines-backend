@@ -65,7 +65,7 @@ export class DyanmoDBHandler {
         } else if (keySort.startsWith("USER#")) {
             projectionExpression = "userEmail, username, creationDate";
         } else if (keySort.startsWith("TRAD#")) {
-            projectionExpression = "DA AGGIUNGERE I CAMPI DELLA TABELLA";
+            projectionExpression = "defaultTranslationLanguage, defaultTranslationinLanguage, translations, modifiedbyUser, published, creationDate, versionedTranslations";
         }
 
         const params: GetCommandInput = {
