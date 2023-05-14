@@ -1,7 +1,7 @@
-import { DeleteItemCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, QueryCommand, GetCommandInput, QueryCommandInput, DeleteCommandInput, PutCommand, PutCommandInput, ScanCommandInput, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteItemCommand, DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, QueryCommand, GetCommandInput, QueryCommandInput, DeleteCommandInput, PutCommand, PutCommandInput, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
 import { environment } from "src/environment/environment";
-import { marshall } from "@aws-sdk/util-dynamodb";
+import { marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 
 export class DyanmoDBHandler {
 
@@ -53,25 +53,14 @@ export class DyanmoDBHandler {
         }
     }
 
-    //! Serve per getTranslation, getTenant e getUser(?)
-    async getItem(tenantId: string, keySort: string) {
-        //* Decide quali campi restituire in base al tipo di chiave
-        let projectionExpression = "";
-        let addToken = false;
-
-        if (keySort.startsWith("TENANT#")) {
-            projectionExpression = "tenatName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage, listAvailableLanguages, #tk";
-            addToken = true;
-        } else if (keySort.startsWith("USER#")) {
-            projectionExpression = "userEmail, username, creationDate";
-        } else if (keySort.startsWith("TRAD#")) {
-            projectionExpression = "defaultTranslationLanguage, defaultTranslationinLanguage, translations, modifiedbyUser, published, creationDate, versionedTranslations";
-        }
+    //* projectExpression serve per dire su quali colonne fare la proiezione
+    //* addToken serve nel caso vada presa anche la colonna token, visto che "token" è keyword riservata di dynamodb
+    async getItem(tenantId: string, keySort: string, projectionExpression: string = "tenantId, keySort", addToken: boolean = false) {
 
         const params: GetCommandInput = {
             TableName: environment.dynamo.translations.tableName,
             Key: { tenantId, keySort },
-            ProjectionExpression: projectionExpression ? projectionExpression : undefined,
+            ProjectionExpression: projectionExpression,
             ExpressionAttributeNames: addToken ? {
                 "#tk": "token"
             } : undefined,
@@ -130,22 +119,23 @@ export class DyanmoDBHandler {
     async getAllTenants() {
         const params: ScanCommandInput = {
             TableName: environment.dynamo.translations.tableName,
-            ConsistentRead: false,
-            ProjectionExpression: "tenantName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage, listAvailableLanguages, #tk",
-            FilterExpression: "begins_with(#ks, :ks)",
+            ConsistentRead: true,
+            ProjectionExpression: "tenantName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage, listAvailableLanguages",
+            FilterExpression: 'begins_with(#ks, :ks)',
             ExpressionAttributeValues: {
-                ":ks": {
-                    S: "TENANT#"
-                }
+                ':ks': { S: 'TENANT#'}
             },
             ExpressionAttributeNames: {
-                "#ks": "keySort",
-                "#tk": "token"
+                "#ks": "keySort"
             }
         };
         try {
             const data = await this.dbClient.send(new ScanCommand(params));
-            return data.Items;
+            let items = data.Items;
+            items = items.map(item => {
+                return unmarshall(item);
+            });
+            return items;
         } catch (err) {
             console.log("Error", err.stack);
             throw { err };

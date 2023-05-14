@@ -11,15 +11,10 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	//! CHECK IF TENANT EXISTS
 	try {
-		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId).then((data) => {
-			return data;
-		});
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
 		if (!tenant) {
 			return formatJSONResponse(
-				{
-					error: "Tenant does not exist",
-				},
-				400
+				{ error: "Tenant does not exist" } ,400
 			);
 		}
 	} catch (e) {
@@ -29,15 +24,10 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	//! CHECK IF USER EXISTS
 	try {
-		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.userEmail).then((data) => {
-			return data;
-		});
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.userEmail, "tenantId");
 		if (user) {
 			return formatJSONResponse(
-				{
-					error: "User already exists",
-				},
-				400
+				{ error: "User already exists", }, 400
 			);
 		}
 	} catch (e) {
@@ -45,25 +35,16 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		console.log(e);
 	}
 
-
-
-
 	try {
         // TODO: implement inviteUser with cognito
 	} catch (e) {
 		return formatJSONResponse(
-			{
-				error: e,
-			},
-			400
+			{ error: e, }, 400
 		);
 	}
 
 	return formatJSONResponse(
-		{
-			invitedUser,
-		},
-		200
+		{ invitedUser, }, 200
 	);
 
 };

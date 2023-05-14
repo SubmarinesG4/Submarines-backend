@@ -11,15 +11,10 @@ const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	//! Check if tenant exists
 	try {
-		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId).then((data) => {
-			return data;
-		});
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
 		if (!tenant) {
 			return formatJSONResponse(
-				{
-					error: "Tenant does not exist",
-				},
-				400
+				{ error: "Tenant does not exist", }, 400
 			);
 		}
 	} catch (e) {
@@ -29,15 +24,10 @@ const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	//! Check if user already exists
 	try {
-		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente).then((data) => {
-			return data;
-		});
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente, "tenantId");
 		if (user) {
 			return formatJSONResponse(
-				{
-					error: "User already exists",
-				},
-				400
+				{ error: "User already exists", }, 400
 			);
 		}
 	} catch (e) {
@@ -57,18 +47,12 @@ const createUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		dynamo.putItem(newUser);
 	} catch (e) {
 		return formatJSONResponse(
-			{
-				error: e,
-			},
-			400
+			{ error: e, }, 400
 		);
 	}
 
 	return formatJSONResponse(
-		{
-			newUser
-		},
-		200
+		{ newUser }, 200
 	);
 
 };

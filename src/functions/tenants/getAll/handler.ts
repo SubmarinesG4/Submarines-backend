@@ -9,16 +9,17 @@ const tenantsGetAll = async () => {
 
 	try {
 		const result = await dynamo.getAllTenants();
+		if (result.length === 0)
+			return formatJSONResponse(
+				{}, 404
+			);
 		return formatJSONResponse(
 			{ tenants: result },
 			200
 		);
 	} catch (error) {
 		return formatJSONResponse(
-			{
-				error,
-			},
-			400
+			{ error, }, 400
 		);
 	}
 };

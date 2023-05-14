@@ -1,7 +1,6 @@
 import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
-//import { putTranslation } from 'src/services/dynamodb';
 import { Translation, Version } from 'src/types/Translation';
 import schema from './schema';
 import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
@@ -30,7 +29,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 
 	//* Controlla se esiste il tenant
 	try {
-		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId);
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
 		if (!tenant) {
 			return formatJSONResponse({ error: "Tenant not found" }, 400);
 		}
@@ -40,7 +39,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 
 	//* Controlla se esiste l'utente
 	try {
-		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.modifiedbyUser);
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.modifiedbyUser, "tenantId");
 		if (!user) {
 			return formatJSONResponse({ error: "User not found" }, 400);
 		}
