@@ -6,7 +6,7 @@ export default {
 		{
 			http: {
 				method: "get",
-				path: "translation/{projectId}/{translationKey}",
+				path: "{tenantId}/translation/{translationKey}",
 			},
 		},
 	],

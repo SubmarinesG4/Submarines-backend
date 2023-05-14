@@ -8,7 +8,7 @@ export const tenantDelete = async (event) => {
 	const dynamo = DyanmoDBHandler.getInstance();
 
 	try {
-		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId);
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
 		if (!tenant) {
 			return formatJSONResponse({}, 404);		//* Tenant not found
 		}
@@ -17,10 +17,7 @@ export const tenantDelete = async (event) => {
 		return formatJSONResponse({}, 200);
 	} catch (e) {
 		return formatJSONResponse(
-			{
-				error: e,
-			},
-			400
+			{ error: e, }, 400
 		);
 	}
 };

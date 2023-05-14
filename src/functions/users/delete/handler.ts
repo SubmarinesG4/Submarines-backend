@@ -9,7 +9,7 @@ const userDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	const dynamo = DyanmoDBHandler.getInstance();
 
 	try {
-		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.userEmail);
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.userEmail, "tenantId");
 		if (!user) {
 			return formatJSONResponse({}, 404);
 		}

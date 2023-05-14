@@ -23,7 +23,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 
 	var tenant;
 	try {
-		tenant = await dynamo.getItem(newTenant.tenantId, newTenant.keySort);
+		tenant = await dynamo.getItem(newTenant.tenantId, newTenant.keySort, "tenantId");
 		await dynamo.putItem(newTenant);
 	} catch (e) {
 		return formatJSONResponse(
