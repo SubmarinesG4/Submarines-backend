@@ -1,26 +1,26 @@
-//import { formatJSONResponse } from "@libs/api-gateway";
+import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
-//import { getAllTranslations } from "src/services/dynamodb";
+import { DyanmoDBHandler } from "src/services/dynamoDBHandler";
 
 const translationGetAll = async (event) => {
-	event
-	/*const projectId = event.pathParameters.projectId as string;
+	const tenantId: string = event.pathParameters.tenantId as string;
+
+	const dynamo = DyanmoDBHandler.getInstance();
 
 	try {
-		const translations = await getAllTranslations(projectId)
+		const translations = await dynamo.getAllTranslations("TRAD#" + tenantId);
+		if (translations.length === 0) {
+			return formatJSONResponse({}, 404);
+		}
 		return formatJSONResponse(
-			{ items: translations },
-			200
+			{ translations }, 200
 		);
-	} catch (error) {
+	} catch	(error) {
 		return formatJSONResponse(
-			{
-				error,
-			},
-			400
+			error, 400
 		);
-	}*/
+	}
 };
 
 export const main = middyfy(

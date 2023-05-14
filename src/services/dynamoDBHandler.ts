@@ -141,4 +141,28 @@ export class DyanmoDBHandler {
             throw { err };
         }
     }
+
+    async getAllTranslations(tenantId: string) {
+        const params: QueryCommandInput = {
+            TableName: environment.dynamo.translations.tableName,
+            ProjectionExpression: "keySort, defaultTranslationLanguage, defaultTranslationinLanguage",
+            KeyConditionExpression: "#tenantId = :pk and begins_with(#keySort, :sk)",
+            ExpressionAttributeNames: {
+                "#tenantId": "tenantId",
+                "#keySort": "keySort"
+            },
+            ExpressionAttributeValues: {
+                ":pk": tenantId,
+                ":sk": tenantId
+            }
+        };
+
+        try {
+            const data = await this.dbClient.send(new QueryCommand(params));
+            return data.Items;
+        } catch (err) {
+            console.log("Error", err.stack);
+            throw { err };
+        }
+    }
 }
