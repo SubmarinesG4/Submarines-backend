@@ -1,5 +1,5 @@
 import { DeleteItemCommand, DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, QueryCommand, GetCommandInput, QueryCommandInput, DeleteCommandInput, PutCommand, PutCommandInput, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, QueryCommand, GetCommandInput, QueryCommandInput, DeleteCommandInput, PutCommand, PutCommandInput, ScanCommandInput, BatchWriteCommandInput, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { environment } from "src/environment/environment";
 import { marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 
@@ -141,34 +141,43 @@ export class DyanmoDBHandler {
     }
 
     async deleteTenantItems(tenantId: string) {
-        
-        const translations = (await this.getAllTranslations(tenantId)).map((i) => {
-            return i["keySort"];
-        });
-
-        for (let item of translations) {
-            try {
-                await this.deleteItem(tenantId, item);
-            } catch (err) {
-                console.log("Error", err.stack);
-                throw { err };
-            }
-        }
-
-
-        const users = await this.getTenantUsers(tenantId).then((i) => {
-            return i.map((i) => {
-                return "USER#" + i["userEmail"];
+        let toDelete = [];  //* Array di oggetti da eliminare, ogni elemento è una deleteRequest visto che viene usato il comando BatchWrite
+        try {
+            (await this.getAllTranslations(tenantId)).map((i) => {      //* Aggiunge tutte le traduzioni da eliminare
+                toDelete.push({
+                    DeleteRequest: {
+                        Key: {
+                            tenantId: tenantId,
+                            keySort: i["keySort"]
+                        }
+                    }
+                });
             });
-        });
-
-        for (let item of users) {
-            try {
-                await this.deleteItem(tenantId, item);
-            } catch (err) {
-                console.log("Error", err.stack);
-                throw { err };
+            (await this.getTenantUsers(tenantId)).map((i) => {          //* Aggiunge tutti gli utenti da eliminare
+                toDelete.push({
+                    DeleteRequest: {
+                        Key: {
+                            tenantId: tenantId,
+                            keySort: "USER#" + i["userEmail"]
+                        }
+                    }
+                });
+            });
+        } catch (err) {
+            console.log("Error", err.stack);
+            throw { err };
+        }
+        
+        const params: BatchWriteCommandInput = {
+            RequestItems: {
+                [environment.dynamo.translations.tableName]: toDelete
             }
+        };
+        try {
+            await this.dbClient.send(new BatchWriteCommand(params));
+        } catch (err) {
+            console.log("Error", err.stack);
+            throw { err };
         }
     }
 
