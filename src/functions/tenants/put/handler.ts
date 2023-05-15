@@ -22,8 +22,12 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 	};
 
 	var tenant;
+	var users = [];
 	try {
 		tenant = await dynamo.getItem(newTenant.tenantId, newTenant.keySort, "tenantId");
+		if (tenant) {
+			users = await dynamo.getTenantUsers(tenant.tenantId);
+		}
 		await dynamo.putItem(newTenant);
 	} catch (e) {
 		return formatJSONResponse(
@@ -39,7 +43,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 			listAvailableLanguages: newTenant.listAvailableLanguages,
 			numberTranslationUsed: newTenant.numberTranslationUsed,
 			token: newTenant.token,
-			userList: []
+			userList: users
 		},
 		(tenant) ? 200 : 201
 	);

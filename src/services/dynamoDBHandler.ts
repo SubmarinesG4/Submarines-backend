@@ -167,17 +167,18 @@ export class DyanmoDBHandler {
             console.log("Error", err.stack);
             throw { err };
         }
-        
-        const params: BatchWriteCommandInput = {
-            RequestItems: {
-                [environment.dynamo.translations.tableName]: toDelete
+        if (toDelete.length > 0) {
+            const params: BatchWriteCommandInput = {
+                RequestItems: {
+                    [environment.dynamo.translations.tableName]: toDelete
+                }
+            };
+            try {
+                await this.dbClient.send(new BatchWriteCommand(params));
+            } catch (err) {
+                console.log("Error", err.stack);
+                throw { err };
             }
-        };
-        try {
-            await this.dbClient.send(new BatchWriteCommand(params));
-        } catch (err) {
-            console.log("Error", err.stack);
-            throw { err };
         }
     }
 
