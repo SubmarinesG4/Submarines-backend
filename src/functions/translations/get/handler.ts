@@ -11,7 +11,7 @@ const translationGet = async (event) => {
 	const dynamo = DyanmoDBHandler.getInstance();
 
 	try {
-		const translation = await dynamo.getItem("TRAD#" + tenantId, "TRAD#" + tenantId + "#" + translationKey, "defaultTranslationLanguage, defaultTranslationinLanguage, translations, creationDate, modificationDate, modifiedbyUser, published");
+		const translation = await dynamo.getItem("TRAD#" + tenantId, "TRAD#" + tenantId + "#" + translationKey, "defaultTranslationLanguage, defaultTranslationinLanguage, translations, creationDate, modificationDate, modifiedbyUser, published, versionedTranslations, keySort");
 		if (!translation) {
 			return formatJSONResponse({}, 404);
 		}

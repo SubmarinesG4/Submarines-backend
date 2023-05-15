@@ -10,7 +10,7 @@ export const getTenant = async (event) => {
 	//* GET TENANT INFO
 	var response;
 	try {
-		const projectionExpression = "tenatName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage, listAvailableLanguages, #tk";
+		const projectionExpression = "tenantName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage, listAvailableLanguages, #tk";
 		response = await dynamo.getItem("TRAD#" + tenantId, "TENANT#" + tenantId, projectionExpression, true);
 		if (!response) {
 			return formatJSONResponse({}, 404);
@@ -38,7 +38,7 @@ export const getTenant = async (event) => {
 			defaultTranslationLanguage: response.defaultTranslationLanguage,
 			listAvailableLanguages: response.listAvailableLanguages,
 			token: response.token,
-			users: users
+			userList: users
 		},
 		200
 	);
