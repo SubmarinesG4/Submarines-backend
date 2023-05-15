@@ -45,8 +45,7 @@ export class DyanmoDBHandler {
             Item: item,
         };
         try {
-            const data = await this.dbClient.send(new PutCommand(params));
-            console.log("Success - item added or updated", data);
+            await this.dbClient.send(new PutCommand(params));
         } catch (err) {
             console.log("Error", err.stack);
             throw err;
@@ -85,8 +84,7 @@ export class DyanmoDBHandler {
             })
         };
         try {
-            const res = await this.dbClient.send(new DeleteItemCommand(params));
-            console.log("Success - item deleted", res);
+            await this.dbClient.send(new DeleteItemCommand(params));
         } catch (err) {
             console.log(err);
         }
@@ -139,6 +137,38 @@ export class DyanmoDBHandler {
         } catch (err) {
             console.log("Error", err.stack);
             throw { err };
+        }
+    }
+
+    async deleteTenantItems(tenantId: string) {
+        
+        const translations = (await this.getAllTranslations(tenantId)).map((i) => {
+            return i["keySort"];
+        });
+
+        for (let item of translations) {
+            try {
+                await this.deleteItem(tenantId, item);
+            } catch (err) {
+                console.log("Error", err.stack);
+                throw { err };
+            }
+        }
+
+
+        const users = await this.getTenantUsers(tenantId).then((i) => {
+            return i.map((i) => {
+                return "USER#" + i["userEmail"];
+            });
+        });
+
+        for (let item of users) {
+            try {
+                await this.deleteItem(tenantId, item);
+            } catch (err) {
+                console.log("Error", err.stack);
+                throw { err };
+            }
         }
     }
 

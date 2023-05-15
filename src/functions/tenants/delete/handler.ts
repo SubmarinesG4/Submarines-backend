@@ -13,7 +13,9 @@ export const tenantDelete = async (event) => {
 			return formatJSONResponse({}, 404);		//* Tenant not found
 		}
 		
-		await dynamo.deleteItem("TRAD#" + event.pathParameters.tenantId, "TENANT#"+ event.pathParameters.tenantId);		
+		await dynamo.deleteTenantItems("TRAD#" + event.pathParameters.tenantId);
+		await dynamo.deleteItem("TRAD#" + event.pathParameters.tenantId, "TENANT#"+ event.pathParameters.tenantId);
+		
 		return formatJSONResponse({}, 200);
 	} catch (e) {
 		return formatJSONResponse(
