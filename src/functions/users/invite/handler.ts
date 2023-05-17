@@ -3,18 +3,20 @@ import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
 import schema from './schema';
 import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
+import { CognitoHandler } from 'src/services/cognitoHandler';
+import { User } from 'src/types/User';
 
 const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-
-    const invitedUser = event.body;
+    
 	const dynamo = DyanmoDBHandler.getInstance();
+	const cognito = CognitoHandler.getInstance();
 
-	//! CHECK IF TENANT EXISTS
+	//! Check if tenant exists
 	try {
 		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
 		if (!tenant) {
 			return formatJSONResponse(
-				{ error: "Tenant does not exist" } ,400
+				{ error: "Tenant does not exist", }, 400
 			);
 		}
 	} catch (e) {
@@ -22,9 +24,9 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		console.log(e);
 	}
 
-	//! CHECK IF USER EXISTS
+	//! Check if user already exists
 	try {
-		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.userEmail, "tenantId");
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente, "tenantId");
 		if (user) {
 			return formatJSONResponse(
 				{ error: "User already exists", }, 400
@@ -36,7 +38,23 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	}
 
 	try {
-        // TODO: implement inviteUser with cognito
+		cognito.createUser(event.body.username, "cesconmatteo18@gmail.com");
+	} catch (e) {
+		return formatJSONResponse(
+			{ error: e, }, 500
+		);
+	}
+
+	const newUser: User = {
+		tenantId: "TRAD#" + event.pathParameters.tenantId,
+		keySort: "USER#" + event.body.emailUtente,
+		userEmail: event.body.userEmail,
+		username: event.body.username,
+		creationDate: new Date().toISOString()
+	}
+
+	try {
+		dynamo.putItem(newUser);
 	} catch (e) {
 		return formatJSONResponse(
 			{ error: e, }, 400
@@ -44,7 +62,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	}
 
 	return formatJSONResponse(
-		{ invitedUser, }, 200
+		{ newUser }, 200
 	);
 
 };
