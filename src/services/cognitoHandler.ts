@@ -25,7 +25,7 @@ export class CognitoHandler {
         return this.instance;
     }
 
-    async createUser (username: string, email: string) {
+    createUser (username: string, email: string) {
         const params = {
             UserPoolId: "eu-central-1_OcyZlYZEj",
             Username: username,
@@ -46,5 +46,41 @@ export class CognitoHandler {
                 console.log('User created successfully');
             }
         });
+    }
+
+    deleteUser (username: string) {
+        try {
+            var params = {
+                UserPoolId: "eu-central-1_OcyZlYZEj", /* required */
+                Username: username /* required */
+            };
+            this.cognito.adminDeleteUser(params, function(err, data) {
+                if (err) {
+                    console.log(err, err.stack);
+                    throw err; 
+                }
+                else
+                    console.log(data);
+            });
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    getUser (username: string) {
+        try {
+            var params = {
+                UserPoolId: "eu-central-1_OcyZlYZEj", /* required */
+                Username: username /* required */
+            };
+            this.cognito.adminGetUser(params, function(err, data) {
+                if (err)
+                    return undefined;
+                else
+                    return data.Username;
+            });
+        } catch (e) {
+            throw e;
+        }
     }
 }

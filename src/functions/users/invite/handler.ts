@@ -38,7 +38,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	}
 
 	try {
-		cognito.createUser(event.body.username, "cesconmatteo18@gmail.com");
+		cognito.createUser(event.body.username, event.body.userEmail);
 	} catch (e) {
 		return formatJSONResponse(
 			{ error: e, }, 500
@@ -47,7 +47,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	const newUser: User = {
 		tenantId: "TRAD#" + event.pathParameters.tenantId,
-		keySort: "USER#" + event.body.emailUtente,
+		keySort: "USER#" + event.body.username,
 		userEmail: event.body.userEmail,
 		username: event.body.username,
 		creationDate: new Date().toISOString()
@@ -56,6 +56,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	try {
 		dynamo.putItem(newUser);
 	} catch (e) {
+		cognito.deleteUser(event.body.username); 		//? Se l'utente non si salva nel DB lo tolgo anche da Cognito
 		return formatJSONResponse(
 			{ error: e, }, 400
 		);
