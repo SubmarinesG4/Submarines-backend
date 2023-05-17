@@ -62,7 +62,7 @@ const environment: Environment = {
 		securityGroupIds: [],
 	},
 	cognito: {
-		userPoolArn: "",
+		userPoolArn: "arn:aws:cognito-idp:eu-central-1:305234046968:userpool/eu-central-1_OcyZlYZEj",
 	},
 };
 

@@ -13,3 +13,5 @@ coverage
 .dynamodb
 
 .DS_Store
+
+.env
