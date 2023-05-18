@@ -29,7 +29,6 @@ export class CognitoHandler {
         const params = {
             UserPoolId: "eu-central-1_OcyZlYZEj",
             Username: username,
-            TemporaryPassword: 'passw0rdTEmp!',
             UserAttributes: [
                 {
                     Name: 'email',
