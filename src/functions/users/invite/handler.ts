@@ -38,7 +38,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	}
 
 	try {
-		cognito.createUser(event.body.username, event.body.userEmail);
+		cognito.createUser(event.body.username, event.body.userEmail, event.body.name, event.body.surname);
 	} catch (e) {
 		return formatJSONResponse(
 			{ error: e, }, 500

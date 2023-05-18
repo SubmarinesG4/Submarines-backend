@@ -3,9 +3,13 @@ export default {
 	properties: {
 		userEmail: { type: "string" },
 		username: { type: "string" },
+		name: { type: "string" },
+		surname: { type: "string" },
 	},
 	required: [
 		"userEmail",
-		"username"
+		"username",
+		"name",
+		"surname"
 	],
 } as const;
