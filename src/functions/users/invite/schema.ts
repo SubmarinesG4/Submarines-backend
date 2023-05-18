@@ -4,12 +4,12 @@ export default {
 		userEmail: { type: "string" },
 		username: { type: "string" },
 		name: { type: "string" },
-		surname: { type: "string" },
+		lastName: { type: "string" },
 	},
 	required: [
 		"userEmail",
 		"username",
 		"name",
-		"surname"
+		"lastName"
 	],
 } as const;

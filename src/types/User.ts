@@ -4,6 +4,8 @@ interface User {
 	userEmail: string
 	username: string
 	creationDate: string
+	name: string
+	lastName: string
 }
 
 export { User };
