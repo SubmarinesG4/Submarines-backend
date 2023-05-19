@@ -72,20 +72,18 @@ export class CognitoHandler {
         }
     }
 
-    getUser (username: string) {
+    async getUser (username: string) {
         try {
             var params = {
-                UserPoolId: "eu-central-1_OcyZlYZEj", /* required */
-                Username: username /* required */
+                UserPoolId: "eu-central-1_OcyZlYZEj",
+                Username: username
             };
-            this.cognito.adminGetUser(params, function(err, data) {
-                if (err)
-                    return undefined;
-                else
-                    return data.Username;
+            await this.cognito.adminGetUser(params, function(err) {
+                return !err ? true : false;
             });
         } catch (e) {
             throw e;
         }
+        return false;
     }
 }
