@@ -94,10 +94,11 @@ export class DyanmoDBHandler {
         const params: QueryCommandInput = {
             TableName: environment.dynamo.translations.tableName,
             KeyConditionExpression: '#tenantId = :pk and begins_with(#keySort, :sk)',
-            ProjectionExpression: "userEmail, username, creationDate",
+            ProjectionExpression: "userEmail, username, creationDate, #name, lastName",
             ExpressionAttributeNames: {
                 "#tenantId": "tenantId",
-                "#keySort": "keySort"
+                "#keySort": "keySort",
+                "#name": "name",
             },
             ExpressionAttributeValues: {
                 ":pk": tenantId,
@@ -118,7 +119,7 @@ export class DyanmoDBHandler {
         const params: ScanCommandInput = {
             TableName: environment.dynamo.translations.tableName,
             ConsistentRead: true,
-            ProjectionExpression: "tenantName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage, listAvailableLanguages",
+            ProjectionExpression: "tenantName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage",
             FilterExpression: 'begins_with(#ks, :ks)',
             ExpressionAttributeValues: {
                 ':ks': { S: 'TENANT#'}

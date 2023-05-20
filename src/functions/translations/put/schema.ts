@@ -19,13 +19,11 @@ export default {
 			}
 		},
 		modifiedbyUser: { type: "string"},
-		published: { type: "boolean"},
 	},
 	required: [
 		"defaultTranslationLanguage",
 		"defaultTranslationinLanguage",
 		"translations",
 		"modifiedbyUser",
-		"published"
 	],
 } as const;

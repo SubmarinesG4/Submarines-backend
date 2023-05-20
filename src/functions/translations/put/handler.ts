@@ -16,7 +16,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		creationDate: new Date().toISOString(),
 		modificationDate: new Date().toISOString(),
 		modifiedbyUser: event.body.modifiedbyUser,
-		published: event.body.published,
+		published: false,
 		versionedTranslations: []
 	}
 	const newVersion: Version = {
