@@ -158,7 +158,7 @@ export class DyanmoDBHandler {
                     DeleteRequest: {
                         Key: {
                             tenantId: tenantId,
-                            keySort: "USER#" + i["userEmail"]
+                            keySort: "USER#" + i["username"]
                         }
                     }
                 });

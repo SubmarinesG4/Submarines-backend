@@ -5,6 +5,8 @@ import schema from './schema';
 import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
 import { CognitoHandler } from 'src/services/cognitoHandler';
 import { User } from 'src/types/User';
+import AWS from 'aws-sdk';
+
 
 const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
     
@@ -27,14 +29,16 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	//! Check if user already exists
 	try {
 		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente, "tenantId");
-		if (user) {
+		const cognitoUser: any = await cognito.getUser(event.body.username);
+		console.log("cognitoUser: "+cognitoUser);
+		if (user || cognitoUser) {
 			return formatJSONResponse(
 				{ error: "User already exists", }, 400
 			);
 		}
 	} catch (e) {
 		console.log("ERROR TRYING TO GET ITEM");
-		console.log(e);
+		console.log(e);	
 	}
 
 	try {
