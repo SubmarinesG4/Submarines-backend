@@ -14,8 +14,9 @@ const userDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 	try {
 		user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.username, "tenantId");
-		const cognitoUser: any = cognito.getUser(event.body.username);
-		if (!user || !cognitoUser) {			//! NON FUNZIONA !COGNITOUSER
+		const cognitoUser: any = await cognito.getUser(event.body.username);
+		console.log("congnitouser: "+ cognitoUser);
+		if (!user || !cognitoUser) {
 			return formatJSONResponse({}, 404);
 		}
 		cognito.deleteUser(event.body.username);

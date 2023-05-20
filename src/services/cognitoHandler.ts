@@ -72,7 +72,20 @@ export class CognitoHandler {
         }
     }
 
-    async getUser (username: string) {
+    getUser (username: string) {
+        return new Promise((resolve, reject) => {
+            this.cognito.adminGetUser({
+                UserPoolId: "eu-central-1_OcyZlYZEj",
+                Username: username
+            }, (err, data) => {
+                if (err)
+                    reject(err.stack);
+                else
+                    resolve(data.UserAttributes[2].Value);
+            });
+        });
+       
+        /*
         try {
             var params = {
                 UserPoolId: "eu-central-1_OcyZlYZEj",
@@ -84,6 +97,6 @@ export class CognitoHandler {
         } catch (e) {
             throw e;
         }
-        return false;
+        return false;*/
     }
 }
