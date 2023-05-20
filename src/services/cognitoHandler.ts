@@ -84,19 +84,5 @@ export class CognitoHandler {
                     resolve(data.UserAttributes[2].Value);
             });
         });
-       
-        /*
-        try {
-            var params = {
-                UserPoolId: "eu-central-1_OcyZlYZEj",
-                Username: username
-            };
-            await this.cognito.adminGetUser(params, function(err) {
-                return !err ? true : false;
-            });
-        } catch (e) {
-            throw e;
-        }
-        return false;*/
     }
 }

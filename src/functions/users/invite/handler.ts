@@ -5,7 +5,6 @@ import schema from './schema';
 import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
 import { CognitoHandler } from 'src/services/cognitoHandler';
 import { User } from 'src/types/User';
-import AWS from 'aws-sdk';
 
 
 const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
