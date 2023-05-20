@@ -16,16 +16,11 @@ export const tenantDelete = async (event) => {
 		}
 
 		//elimino utenti da cognito
-		console.log("inizio a cancellare cognito");
-		var a = await dynamo.getTenantUsers(event.pathParameters.tenantId);
-		console.log(a);
-		/*(await dynamo.getTenantUsers(event.pathParameters.tenantId)).map((i) => {
+		(await dynamo.getTenantUsers("TRAD#" + event.pathParameters.tenantId)).map((i) => {
 			console.log("cancello cognito utente: "+ i["username"]);
 			cognito.deleteUser(i["username"]);
-		});*/
-		console.log("FINE cancellare cognito");
+		});
 
-		
 		await dynamo.deleteTenantItems("TRAD#" + event.pathParameters.tenantId);
 		await dynamo.deleteItem("TRAD#" + event.pathParameters.tenantId, "TENANT#"+ event.pathParameters.tenantId);
 		
