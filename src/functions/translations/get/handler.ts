@@ -18,7 +18,7 @@ const translationGet = async (event) => {
 		return formatJSONResponse(translation, 200);
 	} catch (error) {
 		return formatJSONResponse(
-			{ error }, 400
+			{ error }, error.statusCode
 		);
 	}
 };

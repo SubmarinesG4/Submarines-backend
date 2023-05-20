@@ -27,7 +27,7 @@ export const tenantDelete = async (event) => {
 		return formatJSONResponse({}, 200);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e, }, 400
+			{ error: e, }, e.statusCode
 		);
 	}
 };

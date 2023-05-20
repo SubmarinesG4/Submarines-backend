@@ -31,7 +31,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		await dynamo.putItem(newTenant);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e, }, 400
+			{ error: e, }, e.statusCode
 		);
 	}
 

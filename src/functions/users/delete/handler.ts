@@ -23,7 +23,7 @@ const userDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		await dynamo.deleteItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.username);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e, }, 400
+			{ error: e, }, e.statusCode
 		);
 	}
 

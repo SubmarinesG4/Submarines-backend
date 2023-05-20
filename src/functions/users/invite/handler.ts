@@ -44,7 +44,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		cognito.createUser(event.body.username, event.body.userEmail, event.body.name, event.body.lastName);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e, }, 500
+			{ error: e, }, e.statusCode
 		);
 	}
 
@@ -63,7 +63,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	} catch (e) {
 		cognito.deleteUser(event.body.username); 		//? Se l'utente non si salva nel DB lo tolgo anche da Cognito
 		return formatJSONResponse(
-			{ error: e, }, 400
+			{ error: e, }, e.statusCode
 		);
 	}
 
