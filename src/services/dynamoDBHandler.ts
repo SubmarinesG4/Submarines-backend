@@ -185,7 +185,7 @@ export class DyanmoDBHandler {
     async getAllTranslations(tenantId: string) {
         const params: QueryCommandInput = {
             TableName: environment.dynamo.translations.tableName,
-            ProjectionExpression: "keySort, defaultTranslationLanguage, defaultTranslationinLanguage",
+            ProjectionExpression: "keySort, defaultTranslationLanguage, defaultTranslationinLanguage,published,creationDate",
             KeyConditionExpression: "#tenantId = :pk and begins_with(#keySort, :sk)",
             ExpressionAttributeNames: {
                 "#tenantId": "tenantId",
