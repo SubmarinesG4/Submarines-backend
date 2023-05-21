@@ -28,17 +28,19 @@ export class CognitoHandler {
     createUser (username: string, email: string, name: string, surname: string) {
         const params = {
             UserPoolId: "eu-central-1_OcyZlYZEj",
-            Username: username,
+            Username: email,
             UserAttributes: [
                 {
                     Name: 'email',
                     Value: email
-                }, {
-                    Name: 'name',
-                    Value: name
-                }, {
+                },
+                {
                     Name: 'family_name',
                     Value: surname
+                },
+                {
+                    Name: 'given_name',
+                    Value: name
                 }
             ]
         };
@@ -51,6 +53,18 @@ export class CognitoHandler {
                 console.log('User created successfully');
             }
         });
+    }
+
+    addUserToGroup (email: string, group: string){
+        var params = {
+            GroupName: group, 
+            UserPoolId: "eu-central-1_OcyZlYZEj", 
+            Username: email
+          };
+          this.cognito.adminAddUserToGroup(params, function(err, data) {
+            if (err) console.log(err, err.stack); // an error occurred
+            else     console.log(data);           // successful response
+          });
     }
 
     deleteUser (username: string) {

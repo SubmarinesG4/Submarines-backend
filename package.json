@@ -19,6 +19,7 @@
 		"@middy/core": "^3.4.0",
 		"@middy/http-json-body-parser": "^3.4.0",
 		"amazon-cognito-identity-js": "^6.2.0",
+		"aws-jwt-verify": "^4.0.0",
 		"aws-sdk-client-mock": "^2.1.1",
 		"dotenv": "^16.0.3",
 		"dynamodb-localhost": "github:99x/dynamodb-localhost#db30898f8c40932c7177be7b2f1a81360d12876d",

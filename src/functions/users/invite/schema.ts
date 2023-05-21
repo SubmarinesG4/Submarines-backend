@@ -5,11 +5,13 @@ export default {
 		username: { type: "string" },
 		name: { type: "string" },
 		lastName: { type: "string" },
+		role: { type: "string" },
 	},
 	required: [
 		"userEmail",
 		"username",
 		"name",
-		"lastName"
+		"lastName",
+		"role"
 	],
 } as const;
