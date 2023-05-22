@@ -6,6 +6,7 @@ interface User {
 	creationDate: string
 	name: string
 	lastName: string
+	role: string
 }
 
 export { User };

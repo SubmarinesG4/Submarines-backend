@@ -25,7 +25,7 @@ export class CognitoHandler {
         return this.instance;
     }
 
-    createUser (username: string, email: string, name: string, surname: string) {
+    createUser (email: string, name: string, surname: string) {
         const params = {
             UserPoolId: "eu-central-1_OcyZlYZEj",
             Username: email,
@@ -60,11 +60,11 @@ export class CognitoHandler {
             GroupName: group, 
             UserPoolId: "eu-central-1_OcyZlYZEj", 
             Username: email
-          };
-          this.cognito.adminAddUserToGroup(params, function(err, data) {
+        };
+        this.cognito.adminAddUserToGroup(params, function(err, data) {
             if (err) console.log(err, err.stack); // an error occurred
             else     console.log(data);           // successful response
-          });
+        });
     }
 
     deleteUser (username: string) {
