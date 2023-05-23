@@ -12,6 +12,12 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	const dynamo = DyanmoDBHandler.getInstance();
 	const cognito = CognitoHandler.getInstance();
 
+	if (event.body.userEmail != event.body.username) {
+		return formatJSONResponse(
+			{ error: "Username and email must be the same", }, 400
+		);
+	}
+
 	//! Check if tenant exists
 	try {
 		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
