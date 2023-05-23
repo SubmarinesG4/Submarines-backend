@@ -206,4 +206,48 @@ export class DyanmoDBHandler {
             throw { err };
         }
     }
+
+
+	async getScannedTranslations(tenantId: string, queryStringParameters: any) {
+
+        var params: ScanCommandInput = {
+            "TableName": environment.dynamo.translations.tableName,
+            "ProjectionExpression": "keySort, defaultTranslationLanguage, defaultTranslationinLanguage, creationDate",
+            "FilterExpression": "#id = :tenantId And begins_with(#ks, :starts)",
+            "ExpressionAttributeValues": {
+                ":tenantId": { "S": tenantId },
+                ":starts": { "S": "TRAD#" }
+            },
+            "ExpressionAttributeNames":{
+                "#id": "tenantId",
+                "#ks": "keySort"
+            }
+        };
+
+        if (queryStringParameters.word) {
+            params.FilterExpression += " And contains(#ks, :word)";
+            params.ExpressionAttributeNames["#ks"] = "keySort";
+            params.ExpressionAttributeValues[":word"] = { "S": queryStringParameters.word };
+        }
+        if (queryStringParameters.published) {
+            params.FilterExpression += " And #pub = :published";
+            params.ExpressionAttributeNames["#pub"] = "published";
+            params.ExpressionAttributeValues[":published"] = { "BOOL": queryStringParameters.published };
+        }
+        if (queryStringParameters.date) {
+            params.FilterExpression += " And contains(#creDate, :date)";
+            params.ExpressionAttributeNames["#creDate"] = "creationDate";
+            params.ExpressionAttributeValues[":date"] = { "S": queryStringParameters.date };
+        }
+        
+        try {
+            const data = await this.dbClient.send(new ScanCommand(params));
+            return data.Items.map(item => {
+                return unmarshall(item);
+            });
+        } catch (err) {
+            console.log("Error", err.stack);
+            throw { err };
+        }
+	}
 }

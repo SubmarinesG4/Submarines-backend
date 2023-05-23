@@ -8,8 +8,14 @@ const translationGetAll = async (event) => {
 
 	const dynamo = DyanmoDBHandler.getInstance();
 
+	const queryStringParameters = event.queryStringParameters;
+	
 	try {
-		const translations = await dynamo.getAllTranslations("TRAD#" + tenantId);
+		var translations: any;
+		if (!queryStringParameters)
+			translations = await dynamo.getAllTranslations("TRAD#" + tenantId);
+		else
+			translations = await dynamo.getScannedTranslations("TRAD#" + tenantId, queryStringParameters);
 		if (translations.length === 0) {
 			return formatJSONResponse({}, 404);
 		}

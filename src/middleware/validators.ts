@@ -12,7 +12,7 @@ interface AuthAttributes {
 const authorizer = (handler: (event: any, context: any, callback: any) => void) => {
 		return async (event, context, callback) => {
 			/*
-			if (event.headers['Authorization'] !== "Bearer test")
+			if (event.headers['authorization'] !== "Bearer test")
 				return formatJSONResponse(
 					{
 						message: "User has not got the required role for this action",
@@ -30,8 +30,8 @@ const authorizer = (handler: (event: any, context: any, callback: any) => void) 
 		});
 		
 		try {
-			console.log(event.headers['Authorization']);
-			const payload = await verifier.verify(event.headers['Authorization']);
+			console.log(event.headers['authorization']);
+			const payload = await verifier.verify(event.headers['authorization']);
 			if (hasAccess(payload["cognito:groups"][0], event.path, event.httpMethod))
 				return handler(event, context, callback);
 			else
