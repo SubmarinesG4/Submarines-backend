@@ -27,6 +27,13 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		);
 	}
 
+	//check only superadmin can create superadmin
+	if(event.body.role == "super-admin" && event.requestContext.authorizer.claims["cognito:groups"][0] != "super-admin"){
+		return formatJSONResponse(
+			{ error: "Only superadmin can create superadmin", }, 400
+		);
+	}
+
 	//! Check if tenant exists
 	try {
 		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
