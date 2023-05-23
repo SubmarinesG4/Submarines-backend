@@ -20,7 +20,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		token: "h32c23crn2rcn23jcry2", //! ????????
 	};
 
-	if (newTenant.listAvailableLanguages.includes(newTenant.defaultTranslationLanguage))
+	if (!newTenant.listAvailableLanguages.includes(newTenant.defaultTranslationLanguage))
 	return formatJSONResponse(
 		{ error: "defaultTranslationLanguage must be in listAvailableLanguages" }, 400
 	);

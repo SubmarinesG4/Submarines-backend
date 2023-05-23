@@ -12,11 +12,12 @@ const translationGetAll = async (event) => {
 	
 	try {
 		var translations: any;
-		if (queryStringParameters.published == "" && queryStringParameters.date == "" && queryStringParameters.word == "")
+		if(queryStringParameters == null || ( queryStringParameters.published == "" || queryStringParameters.date == "" || queryStringParameters.word == "")){
 			translations = await dynamo.getAllTranslations("TRAD#" + tenantId);
-
-		else
-			translations = await dynamo.getScannedTranslations("TRAD#" + tenantId, queryStringParameters);
+		}
+		else {
+			translations = await dynamo.getScannedTranslations("TRAD#" + tenantId, queryStringParameters);	
+		}
 
 		return formatJSONResponse(
 			{ translations }, 200

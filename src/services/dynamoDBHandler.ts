@@ -212,7 +212,7 @@ export class DynamoDBHandler {
 
         var params: ScanCommandInput = {
             "TableName": environment.dynamo.translations.tableName,
-            "ProjectionExpression": "translationKey, defaultTranslationLanguage, defaultTranslationinLanguage, creationDate",
+            "ProjectionExpression": "translationKey, defaultTranslationLanguage, defaultTranslationinLanguage, creationDate, published",
             "FilterExpression": "#id = :tenantId And begins_with(#ks, :starts)",
             "ExpressionAttributeValues": {
                 ":tenantId": { "S": tenantId },
