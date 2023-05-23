@@ -1,6 +1,7 @@
 interface Translation {
 	tenantId: string
 	keySort: string
+	translationKey: string
 	defaultTranslationLanguage: string
 	defaultTranslationinLanguage: string
 	translations: { language: string, content: string }[]
