@@ -16,6 +16,7 @@ interface Version {
 	modificationDate: string,
 	modifiedbyUser: string,
 	translations: { language: string, content: string }[]
+	published: boolean;
 }
 
 export { Translation, Version };
