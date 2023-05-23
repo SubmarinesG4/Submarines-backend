@@ -13,7 +13,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	const cognito = CognitoHandler.getInstance();
 
 
-
+	//! Check if email and username have the correct format
 	const regex: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 	if (!regex.test(event.body.userEmail) || !regex.test(event.body.username)) {
 		return formatJSONResponse(
