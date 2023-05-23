@@ -17,13 +17,14 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		creationDate: new Date().toISOString(),
 		modificationDate: new Date().toISOString(),
 		modifiedbyUser: event.body.modifiedbyUser,
-		published: false,
+		published: event.body.published,
 		versionedTranslations: []
 	}
 	const newVersion: Version = {
 		modificationDate: newTranslation.creationDate,
 		modifiedbyUser: newTranslation.modifiedbyUser,
-		translations: newTranslation.translations
+		translations: newTranslation.translations,
+		published: newTranslation.published
 	};
 
 	const dynamo = DynamoDBHandler.getInstance();
@@ -83,4 +84,4 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 	}, jsonTranslation ? 200 : 201);
 };
 
-export const main = middyfy(authorizer(tranlsationPut));
+export const main = middyfy(authorizer(tranlsationPut, ["super-admin", "admin", "traduttore"]));

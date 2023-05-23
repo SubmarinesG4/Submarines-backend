@@ -25,5 +25,5 @@ const tenantsGetAll = async () => {
 };
 
 export const main = middyfy(
-	authorizer(tenantsGetAll)
+	authorizer(tenantsGetAll, ["super-admin"])
 );

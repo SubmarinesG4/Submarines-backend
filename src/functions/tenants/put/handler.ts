@@ -49,4 +49,4 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 	);
 };
 
-export const main = middyfy(authorizer(tenantPut));
+export const main = middyfy(authorizer(tenantPut, ["super-admin"]));

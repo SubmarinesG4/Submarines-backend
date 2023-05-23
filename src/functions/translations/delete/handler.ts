@@ -25,4 +25,4 @@ const translationDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
 	}
 };
 
-export const main = middyfy(authorizer(translationDelete));
+export const main = middyfy(authorizer(translationDelete, ["super-admin", "admin", "traduttore"]));

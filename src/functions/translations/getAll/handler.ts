@@ -12,13 +12,12 @@ const translationGetAll = async (event) => {
 	
 	try {
 		var translations: any;
-		if (!queryStringParameters)
+		if (queryStringParameters.published == "" && queryStringParameters.date == "" && queryStringParameters.word == "")
 			translations = await dynamo.getAllTranslations("TRAD#" + tenantId);
+
 		else
 			translations = await dynamo.getScannedTranslations("TRAD#" + tenantId, queryStringParameters);
-		if (translations.length === 0) {
-			return formatJSONResponse({}, 404);
-		}
+
 		return formatJSONResponse(
 			{ translations }, 200
 		);
@@ -30,5 +29,5 @@ const translationGetAll = async (event) => {
 };
 
 export const main = middyfy(
-	authorizer(translationGetAll)
+	authorizer(translationGetAll, ["super-admin", "admin", "traduttore"])
 );
