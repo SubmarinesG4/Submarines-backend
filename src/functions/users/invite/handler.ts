@@ -97,4 +97,4 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 
 };
 
-export const main = middyfy(authorizer(inviteUser));
+export const main = middyfy(authorizer(inviteUser, ["super-admin", "admin"]));

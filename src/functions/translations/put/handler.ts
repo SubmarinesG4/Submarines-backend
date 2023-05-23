@@ -84,4 +84,4 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 	}, jsonTranslation ? 200 : 201);
 };
 
-export const main = middyfy(authorizer(tranlsationPut));
+export const main = middyfy(authorizer(tranlsationPut, ["super-admin", "admin", "traduttore"]));

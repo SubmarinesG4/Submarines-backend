@@ -30,4 +30,4 @@ const userDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	return formatJSONResponse({}, 200);
 };
 
-export const main = middyfy(authorizer(userDelete));
+export const main = middyfy(authorizer(userDelete, ["super-admin", "admin"]));

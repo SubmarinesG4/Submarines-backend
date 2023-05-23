@@ -32,4 +32,4 @@ export const tenantDelete = async (event) => {
 	}
 };
 
-export const main = middyfy(authorizer(tenantDelete));
+export const main = middyfy(authorizer(tenantDelete, ["super-admin"]));

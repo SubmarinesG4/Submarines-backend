@@ -45,5 +45,5 @@ export const getTenant = async (event) => {
 };
 
 export const main = middyfy(
-	authorizer(getTenant)
+	authorizer(getTenant, ["super-admin", "admin", "traduttore"])
 );

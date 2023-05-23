@@ -29,5 +29,5 @@ const translationGetAll = async (event) => {
 };
 
 export const main = middyfy(
-	authorizer(translationGetAll)
+	authorizer(translationGetAll, ["super-admin", "admin", "traduttore"])
 );
