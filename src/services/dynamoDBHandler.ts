@@ -1,11 +1,11 @@
-import { DeleteItemCommand, DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { DeleteItemCommand, DynamoDBClient, ScanCommand, UpdateItemCommand, UpdateItemCommandInput } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, QueryCommand, GetCommandInput, QueryCommandInput, DeleteCommandInput, PutCommand, PutCommandInput, ScanCommandInput, BatchWriteCommandInput, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { environment } from "src/environment/environment";
 import { marshall, unmarshall} from "@aws-sdk/util-dynamodb";
 
-export class DyanmoDBHandler {
+export class DynamoDBHandler {
 
-    private static instance: DyanmoDBHandler;
+    private static instance: DynamoDBHandler;
     private dbClient: DynamoDBDocumentClient;
 
     //* DB Client configuration
@@ -32,9 +32,9 @@ export class DyanmoDBHandler {
 	}
 
     //*  Singleton
-    static getInstance(): DyanmoDBHandler {
+    static getInstance(): DynamoDBHandler {
         if (!this.instance) {
-            this.instance = new DyanmoDBHandler();
+            this.instance = new DynamoDBHandler();
         }
         return this.instance;
     }
@@ -250,4 +250,35 @@ export class DyanmoDBHandler {
             throw { err };
         }
 	}
+
+    async setTranslationPublished(tenantId: string, keySort: string, publish: boolean) {
+        console.log("\n\n" + tenantId, keySort, publish + "\n\n");
+        const params: UpdateItemCommandInput = {
+            "TableName": environment.dynamo.translations.tableName,
+            "Key": {
+                "tenantId": {
+                    "S": tenantId
+                },
+                "keySort": {
+                    "S": keySort
+                }
+            },
+            "UpdateExpression": "SET #pub = :option",
+            "ExpressionAttributeValues": {
+            ":option": {
+                "BOOL": publish
+            }
+            },
+            "ExpressionAttributeNames": {
+                "#pub": "published"
+            }
+        };
+
+        try {
+            await this.dbClient.send(new UpdateItemCommand(params));
+        } catch (err) {
+            console.log("Error", err.stack);
+            throw { err };
+        }
+    }
 }

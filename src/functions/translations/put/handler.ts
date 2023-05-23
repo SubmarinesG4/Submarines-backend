@@ -3,7 +3,7 @@ import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
 import { Translation, Version } from 'src/types/Translation';
 import schema from './schema';
-import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
+import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
@@ -26,7 +26,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		translations: newTranslation.translations
 	};
 
-	const dynamo = DyanmoDBHandler.getInstance();
+	const dynamo = DynamoDBHandler.getInstance();
 
 	//* Controlla se esiste il tenant
 	try {

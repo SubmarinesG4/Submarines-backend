@@ -2,11 +2,11 @@ import { formatJSONResponse } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
 import { CognitoHandler } from 'src/services/cognitoHandler';
-import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
+import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 export const tenantDelete = async (event) => {
 
-	const dynamo = DyanmoDBHandler.getInstance();
+	const dynamo = DynamoDBHandler.getInstance();
 	const cognito = CognitoHandler.getInstance();
 
 	try {

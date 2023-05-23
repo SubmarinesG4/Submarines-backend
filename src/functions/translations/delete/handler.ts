@@ -2,11 +2,11 @@ import { formatJSONResponse, ValidatedEventAPIGatewayProxyEvent } from '@libs/ap
 import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
 import schema from './schema';
-import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
+import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 const translationDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
-	const dynamo = DyanmoDBHandler.getInstance();
+	const dynamo = DynamoDBHandler.getInstance();
 
 	const tenantId = event.pathParameters.tenantId;
 	const translationKey = event.pathParameters.translationKey;

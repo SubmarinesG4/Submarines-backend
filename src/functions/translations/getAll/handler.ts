@@ -1,12 +1,12 @@
 import { formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
-import { DyanmoDBHandler } from "src/services/dynamoDBHandler";
+import { DynamoDBHandler } from "src/services/dynamoDBHandler";
 
 const translationGetAll = async (event) => {
 	const tenantId: string = event.pathParameters.tenantId as string;
 
-	const dynamo = DyanmoDBHandler.getInstance();
+	const dynamo = DynamoDBHandler.getInstance();
 
 	const queryStringParameters = event.queryStringParameters;
 	
