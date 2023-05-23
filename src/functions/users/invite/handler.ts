@@ -12,6 +12,16 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	const dynamo = DynamoDBHandler.getInstance();
 	const cognito = CognitoHandler.getInstance();
 
+
+
+	const regex: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+	if (!regex.test(event.body.userEmail) || !regex.test(event.body.username)) {
+		console.log("userEmail/username has not the correct format");
+		return formatJSONResponse(
+			{ error: "userEmail/username has not the correct format", }, 400
+		);
+	}
+
 	if (event.body.userEmail != event.body.username) {
 		return formatJSONResponse(
 			{ error: "Username and email must be the same", }, 400
