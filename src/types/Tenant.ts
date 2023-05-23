@@ -3,7 +3,6 @@ interface Tenant {
 	keySort: string
 	tenantName: string
 	numberTranslationAvailable: number
-	numberTranslationUsed: number
 	defaultTranslationLanguage: string
 	listAvailableLanguages: string[]
 	token: string

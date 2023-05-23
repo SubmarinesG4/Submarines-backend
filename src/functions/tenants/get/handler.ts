@@ -34,7 +34,7 @@ export const getTenant = async (event) => {
 		{
 			tenantName: response.tenantName,
 			numberTranslationAvailable: response.numberTranslationAvailable,
-			numberTranslationUsed: response.numberTranslationUsed,
+			numberTranslationUsed: (await dynamo.getAllTranslations("TRAD#" + tenantId)).length,
 			defaultTranslationLanguage: response.defaultTranslationLanguage,
 			listAvailableLanguages: response.listAvailableLanguages,
 			token: response.token,

@@ -17,7 +17,6 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		numberTranslationAvailable: event.body.numberTranslationAvailable,
 		defaultTranslationLanguage: event.body.defaultTranslationLanguage,
 		listAvailableLanguages: event.body.listAvailableLanguages,
-		numberTranslationUsed: 0,
 		token: "h32c23crn2rcn23jcry2", //! ????????
 	};
 
@@ -41,7 +40,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 			numberTranslationAvailable: newTenant.numberTranslationAvailable,
 			defaultTranslationLanguage: newTenant.defaultTranslationLanguage,
 			listAvailableLanguages: newTenant.listAvailableLanguages,
-			numberTranslationUsed: newTenant.numberTranslationUsed,
+			numberTranslationUsed: (await dynamo.getAllTranslations(newTenant.tenantId)).length,
 			token: newTenant.token,
 			userList: users
 		},
