@@ -17,7 +17,7 @@ export const getTenant = async (event) => {
 		}
 	} catch (error) {
 		return formatJSONResponse(
-			{ error }, 400
+			{ error }, error.statusCode
 		);
 	}
 

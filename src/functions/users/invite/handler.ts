@@ -3,18 +3,21 @@ import { middyfy } from '@libs/lambda';
 import { authorizer } from 'src/middleware/validators';
 import schema from './schema';
 import { DyanmoDBHandler } from 'src/services/dynamoDBHandler';
+import { CognitoHandler } from 'src/services/cognitoHandler';
+import { User } from 'src/types/User';
+
 
 const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-
-    const invitedUser = event.body;
+    
 	const dynamo = DyanmoDBHandler.getInstance();
+	const cognito = CognitoHandler.getInstance();
 
-	//! CHECK IF TENANT EXISTS
+	//! Check if tenant exists
 	try {
 		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
 		if (!tenant) {
 			return formatJSONResponse(
-				{ error: "Tenant does not exist" } ,400
+				{ error: "Tenant does not exist", }, 400
 			);
 		}
 	} catch (e) {
@@ -22,29 +25,52 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		console.log(e);
 	}
 
-	//! CHECK IF USER EXISTS
+	//! Check if user already exists
 	try {
-		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + invitedUser.userEmail, "tenantId");
-		if (user) {
+		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente, "tenantId");
+		const cognitoUser: any = await cognito.getUser(event.body.username);
+		console.log("cognitoUser: "+cognitoUser);
+		if (user || cognitoUser) {
 			return formatJSONResponse(
 				{ error: "User already exists", }, 400
 			);
 		}
 	} catch (e) {
 		console.log("ERROR TRYING TO GET ITEM");
-		console.log(e);
+		console.log(e);	
 	}
 
 	try {
-        // TODO: implement inviteUser with cognito
+		cognito.createUser(event.body.userEmail, event.body.name, event.body.lastName);
+		cognito.addUserToGroup(event.body.userEmail, event.body.role)
 	} catch (e) {
+		return formatJSONResponse(
+			{ error: e, }, 500
+		);
+	}
+
+	const newUser: User = {
+		tenantId: "TRAD#" + event.pathParameters.tenantId,
+		keySort: "USER#" + event.body.username,
+		userEmail: event.body.userEmail,
+		username: event.body.username,
+		name: event.body.name,
+		lastName: event.body.lastName,
+		creationDate: new Date().toISOString(),
+		role: event.body.role,
+	}
+
+	try {
+		dynamo.putItem(newUser);
+	} catch (e) {
+		cognito.deleteUser(event.body.username); 		//? Se l'utente non si salva nel DB lo tolgo anche da Cognito
 		return formatJSONResponse(
 			{ error: e, }, 400
 		);
 	}
 
 	return formatJSONResponse(
-		{ invitedUser, }, 200
+		{ newUser }, 200
 	);
 
 };

@@ -16,7 +16,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		creationDate: new Date().toISOString(),
 		modificationDate: new Date().toISOString(),
 		modifiedbyUser: event.body.modifiedbyUser,
-		published: event.body.published,
+		published: false,
 		versionedTranslations: []
 	}
 	const newVersion: Version = {
@@ -34,7 +34,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 			return formatJSONResponse({ error: "Tenant not found" }, 400);
 		}
 	} catch (e) {
-		return formatJSONResponse({ error: e }, 400);
+		return formatJSONResponse({ error: e }, e.statusCode);
 	}
 
 	//* Controlla se esiste l'utente
@@ -44,7 +44,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 			return formatJSONResponse({ error: "User not found" }, 400);
 		}
 	} catch (e) {
-		return formatJSONResponse({ error: e }, 400);
+		return formatJSONResponse({ error: e }, e.statusCode);
 	}
 
 	let jsonTranslation;
@@ -67,7 +67,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 
 		await dynamo.putItem(newTranslation);
 	} catch (e) {
-		return formatJSONResponse({ error: e }, 400);
+		return formatJSONResponse({ error: e }, e.statusCode);
 	}
 
 	return formatJSONResponse({ newTranslation }, jsonTranslation ? 200 : 201);

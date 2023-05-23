@@ -9,7 +9,6 @@ import {
 	tenantPut,
 	getTenant,
 	inviteUser,
-	createUser,
 	deleteUser,
 	deleteTenant,
 	tenantsGetAll,
@@ -105,7 +104,7 @@ const serverlessConfiguration: AWS = {
 		}
 	},
 	// import the function via paths
-	functions: { translationGet, translationPut, translationGetAll, tenantPut, getTenant, inviteUser, createUser, deleteUser, deleteTenant, tenantsGetAll, translationDelete },
+	functions: { translationGet, translationPut, translationGetAll, tenantPut, getTenant, inviteUser, deleteUser, deleteTenant, tenantsGetAll, translationDelete },
 	package: { individually: true },
 	custom: {
 		esbuild: {
