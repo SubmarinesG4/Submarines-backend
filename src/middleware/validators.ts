@@ -14,7 +14,6 @@ const authorizer = (
 		return async (event, context, callback) => {
 
 			const attributes = event.requestContext.authorizer.claims;
-			console.log(attributes["cognito:groups"]);
 			const authAttributes: AuthAttributes = {
 				userType: attributes["cognito:groups"],
 				userMail: attributes.email,

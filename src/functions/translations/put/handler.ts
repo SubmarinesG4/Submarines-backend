@@ -29,9 +29,12 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 
 	const dynamo = DynamoDBHandler.getInstance();
 
+	var translationLimit: number;
+
 	//* Controlla se esiste il tenant
 	try {
-		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId, numberTranslationAvailable");
+		translationLimit = tenant.numberTranslationAvailable;
 		if (!tenant) {
 			return formatJSONResponse({ error: "Tenant not found" }, 400);
 		}
@@ -56,12 +59,15 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 
 		//* Controlla se esiste già la traduzione (cioè è da modificare)
 		jsonTranslation = await dynamo.getItem(newTranslation.tenantId, newTranslation.keySort, "versionedTranslations, creationDate");
-		if (jsonTranslation) {
+		if (jsonTranslation != undefined) {
 			const old = await <Translation>JSON.parse(JSON.stringify(jsonTranslation));		//* Vecchio oggetto
 			newTranslation.creationDate = old.creationDate;								//* La data di creazione non cambia
 			versions = old.versionedTranslations;									//* Prende le versioni precedenti
 			if (versions.length == 5)												//* Se sono 5 elimina la più vecchia (prima nell'array)
 				versions.shift();
+		} else {
+			if ((await dynamo.getAllTranslations(newTranslation.tenantId)).length + 1 >= translationLimit)
+				return formatJSONResponse({ error: "Translation limit reached" }, 400);
 		}
 		versions.push(newVersion);													//* Aggiunge la nuova versione
 		newTranslation.versionedTranslations = versions;							//* Aggiorna l'oggetto
