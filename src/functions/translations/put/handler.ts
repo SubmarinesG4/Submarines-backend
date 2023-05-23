@@ -59,7 +59,6 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 			const old = await <Translation>JSON.parse(JSON.stringify(jsonTranslation));		//* Vecchio oggetto
 			newTranslation.creationDate = old.creationDate;								//* La data di creazione non cambia
 			versions = old.versionedTranslations;									//* Prende le versioni precedenti
-			console.log(old);
 			if (versions.length == 5)												//* Se sono 5 elimina la più vecchia (prima nell'array)
 				versions.shift();
 		}
@@ -71,7 +70,17 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		return formatJSONResponse({ error: e }, e.statusCode);
 	}
 
-	return formatJSONResponse({ newTranslation }, jsonTranslation ? 200 : 201);
+	return formatJSONResponse({ 
+		translationKey: newTranslation.translationKey,
+		defaultTranslationLanguage: newTranslation.defaultTranslationLanguage,
+		defaultTranslationinLanguage: newTranslation.defaultTranslationinLanguage,
+		translations: newTranslation.translations,
+		creationDate: newTranslation.creationDate,
+		modificationDate: newTranslation.modificationDate,
+		modifiedbyUser: newTranslation.modifiedbyUser,
+		published: newTranslation.published,
+		versionedTranslations: newTranslation.versionedTranslations
+	}, jsonTranslation ? 200 : 201);
 };
 
 export const main = middyfy(authorizer(tranlsationPut));

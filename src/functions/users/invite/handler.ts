@@ -76,7 +76,14 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	}
 
 	return formatJSONResponse(
-		{ newUser }, 200
+		{ 
+			userEmail: newUser.userEmail,
+			username: newUser.username,
+			name: newUser.name,
+			lastName: newUser.lastName,
+			creationDate: newUser.creationDate,
+			role: newUser.role,
+		}, 200
 	);
 
 };
