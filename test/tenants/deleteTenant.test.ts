@@ -1,11 +1,11 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { tenantDelete } from '../../../src/functions/tenants/delete/handler';
+import { tenantDelete } from '../../src/functions/tenants/delete/handler';
 import { mockClient } from "aws-sdk-client-mock";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 import { DeleteCommand, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { environment } from '../../../src/environment/environment';
-import { eventJSON } from '../../../events/deleteTenantEvent';
+import { environment } from '../../src/environment/environment';
+import { eventJSON } from '../../events/deleteTenantEvent';
 
 const ddbMock = mockClient(DynamoDBDocumentClient);
 

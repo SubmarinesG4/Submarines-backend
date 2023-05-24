@@ -1,12 +1,12 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { getTenant } from '../../../src/functions/tenants/get/handler';
-import { eventJSON } from '../../../events/getTenantEvent';
+import { getTenant } from '../../src/functions/tenants/get/handler';
+import { eventJSON } from '../../events/getTenantEvent';
 
 import { mockClient } from "aws-sdk-client-mock";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { environment } from '../../../src/environment/environment';
+import { environment } from '../../src/environment/environment';
 
 const ddbMock = mockClient(DynamoDBDocumentClient);
 

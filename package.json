@@ -23,8 +23,7 @@
 		"aws-sdk-client-mock": "^2.1.1",
 		"dotenv": "^16.0.3",
 		"dynamodb-localhost": "github:99x/dynamodb-localhost#db30898f8c40932c7177be7b2f1a81360d12876d",
-		"serverless-dynamodb-local": "^0.2.40",
-		"superagent": "^8.0.9"
+		"serverless-dynamodb-local": "^0.2.40"
 	},
 	"devDependencies": {
 		"@serverless/typescript": "^3.0.0",
@@ -37,7 +36,6 @@
 		"serverless": "^3.27.0",
 		"serverless-esbuild": "^1.23.3",
 		"serverless-offline": "^12.0.4",
-		"supertest": "^6.3.3",
 		"ts-jest": "^29.1.0",
 		"ts-node": "^10.4.0",
 		"tsconfig-paths": "^3.9.0",
