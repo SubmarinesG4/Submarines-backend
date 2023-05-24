@@ -27,6 +27,21 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		published: newTranslation.published
 	};
 
+	//* Controlla che ci sia la lingua di default in translations
+	var flag = false;
+	for (var i=0; i<newTranslation.translations.length; i++)
+		if (newTranslation.translations[i].language == newTranslation.defaultTranslationLanguage)
+			flag = true;
+	if (!flag)
+		return formatJSONResponse({ error: "defaultTranslationLanguage must be in translations" }, 400);
+
+	//* Controllare che non ci siano duplicati di language dentro translations
+	var languages: Array<string> = [];
+	for (var i=0; i<newTranslation.translations.length; i++)
+		languages.push(newTranslation.translations[i].language);
+	if ((new Set(languages)).size !== languages.length)
+		return formatJSONResponse({ error: "translations must not contain duplicates" }, 400);
+
 	const dynamo = DynamoDBHandler.getInstance();
 
 	var translationLimit: number;
