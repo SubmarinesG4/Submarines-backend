@@ -66,7 +66,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 			if (versions.length == 5)												//* Se sono 5 elimina la più vecchia (prima nell'array)
 				versions.shift();
 		} else {
-			if ((await dynamo.getAllTranslations(newTranslation.tenantId)).length + 1 >= translationLimit)
+			if ((await dynamo.getAllTranslations(newTranslation.tenantId)).length + 1 > translationLimit)
 				return formatJSONResponse({ error: "Translation limit reached" }, 400);
 		}
 		versions.push(newVersion);													//* Aggiunge la nuova versione

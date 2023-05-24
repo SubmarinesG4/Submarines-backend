@@ -183,10 +183,10 @@ export class DynamoDBHandler {
         }
     }
 
-    async getAllTranslations(tenantId: string) {
+    async getAllTranslations(tenantId: string, projectExpression: string = "translationKey, defaultTranslationLanguage, defaultTranslationinLanguage, published, creationDate") {
         const params: QueryCommandInput = {
             TableName: environment.dynamo.translations.tableName,
-            ProjectionExpression: "translationKey, defaultTranslationLanguage, defaultTranslationinLanguage,published,creationDate",
+            ProjectionExpression: projectExpression,
             KeyConditionExpression: "#tenantId = :pk and begins_with(#keySort, :sk)",
             ExpressionAttributeNames: {
                 "#tenantId": "tenantId",
@@ -276,6 +276,32 @@ export class DynamoDBHandler {
 
         try {
             await this.dbClient.send(new UpdateItemCommand(params));
+        } catch (err) {
+            console.log("Error", err.stack);
+            throw { err };
+        }
+    }
+
+    async getTenantByToken (token: string) {
+        const params: ScanCommandInput = {
+            TableName: environment.dynamo.translations.tableName,
+            FilterExpression: "#tk = :tk",
+            ProjectionExpression: "tenantId, listAvailableLanguages",
+            ExpressionAttributeValues: {
+                ":tk": {
+                    "S": token
+                }
+            },
+            ExpressionAttributeNames: {
+                "#tk": "token"
+            }
+        };
+
+        try {
+            const data = await this.dbClient.send(new ScanCommand(params));
+            return data.Items.map(item => {
+                return unmarshall(item);
+            });
         } catch (err) {
             console.log("Error", err.stack);
             throw { err };
