@@ -20,10 +20,17 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		token: "token1", //! ????????
 	};
 
+	//* Controlla se la lingua di default è tra quelle disponibili
 	if (!newTenant.listAvailableLanguages.includes(newTenant.defaultTranslationLanguage))
-	return formatJSONResponse(
-		{ error: "defaultTranslationLanguage must be in listAvailableLanguages" }, 400
-	);
+		return formatJSONResponse(
+			{ error: "defaultTranslationLanguage must be in listAvailableLanguages" }, 400
+		);
+
+	//* Controlla se ci sono lingue ripetute in listAvailableLanguages
+	if ((new Set(newTenant.listAvailableLanguages)).size !== newTenant.listAvailableLanguages.length)
+		return formatJSONResponse(
+			{ error: "listAvailableLanguages must not contain duplicates" }, 400
+		);
 
 	var tenant;
 	var users = [];
