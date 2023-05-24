@@ -31,13 +31,24 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 
 	var translationLimit: number;
 
-	//* Controlla se esiste il tenant
+	//* Controlla: 
+	//* se esiste il tenant
+	//* se la lingua di default è corretta
+	//* se tutte le lingue di traduzione sono presenti tra le disponibili del tenant
 	try {
-		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId, numberTranslationAvailable");
+
+		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId, numberTranslationAvailable, listAvailableLanguages, defaultTranslationLanguage");
 		translationLimit = tenant.numberTranslationAvailable;
-		if (!tenant) {
+		if (!tenant)
 			return formatJSONResponse({ error: "Tenant not found" }, 400);
+		if (tenant.defaultTranslationLanguage != newTranslation.defaultTranslationLanguage)
+			return formatJSONResponse({ error: "DefaultTranslationLanguage is not correct" }, 400);
+		for (var i=0; i<newTranslation.translations.length; i++) {
+			if (!tenant.listAvailableLanguages.includes(newTranslation.translations[i].language)) {
+				return formatJSONResponse({ error: "Language " + newTranslation.translations[i].language + " is not available" }, 400);
+			}
 		}
+
 	} catch (e) {
 		return formatJSONResponse({ error: e }, e.statusCode);
 	}
@@ -52,7 +63,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		return formatJSONResponse({ error: e }, e.statusCode);
 	}
 
-	let jsonTranslation;
+	let jsonTranslation: any;
 	try {
 
 		let versions: Array<Version> = [];
