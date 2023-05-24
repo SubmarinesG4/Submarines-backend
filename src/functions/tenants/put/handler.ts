@@ -8,6 +8,7 @@ import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 
 	const dynamo = DynamoDBHandler.getInstance();
+	const getUuid = require('uuid-by-string');
 
 	const tenantId = event.pathParameters.tenantId as string;
 	const newTenant: Tenant = {
@@ -17,7 +18,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		numberTranslationAvailable: event.body.numberTranslationAvailable,
 		defaultTranslationLanguage: event.body.defaultTranslationLanguage,
 		listAvailableLanguages: event.body.listAvailableLanguages,
-		token: "token1", //! ????????
+		token: getUuid(tenantId), //! ????????
 	};
 
 	//* Controlla se la lingua di default è tra quelle disponibili
