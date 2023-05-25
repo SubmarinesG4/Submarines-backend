@@ -5,10 +5,13 @@ import schema from './schema';
 import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+	return logic(event.body, event.pathParameters);
+};
 
+async function logic (body: any, pathParameters: any) {
 	const dynamo = DynamoDBHandler.getInstance();
 
-	if (!event.body.listAvailableLanguages && !event.body.defaultTranslationLanguage && !event.body.numberTranslationAvailable) {
+	if (!body.listAvailableLanguages && !body.defaultTranslationLanguage && !body.numberTranslationAvailable) {
 		return formatJSONResponse(
 			{ error: "Nothing to update" }, 400
 		);
@@ -16,7 +19,7 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 
 	var old: any;
 	try {
-		old = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId, keySort, tenantName, numberTranslationAvailable, defaultTranslationLanguage, listAvailableLanguages, #tk", true);
+		old = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "TENANT#" + pathParameters.tenantId, "tenantId, keySort, tenantName, numberTranslationAvailable, defaultTranslationLanguage, listAvailableLanguages, #tk", true);
 	} catch (e) {
 		return formatJSONResponse(
 			{ error: e, }, e.statusCode
@@ -29,25 +32,25 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		);
 	}
 
-	if (event.body.numberTranslationAvailable)
-		old.numberTranslationAvailable = event.body.numberTranslationAvailable;
+	if (body.numberTranslationAvailable)
+		old.numberTranslationAvailable = body.numberTranslationAvailable;
 
-	if (event.body.listAvailableLanguages) {
+	if (body.listAvailableLanguages) {
 		//* Controlla se ci sono lingue ripetute in listAvailableLanguages
-		if ((new Set(event.body.listAvailableLanguages)).size !== event.body.listAvailableLanguages.length)
+		if ((new Set(body.listAvailableLanguages)).size !== body.listAvailableLanguages.length)
 			return formatJSONResponse(
 				{ error: "listAvailableLanguages must not contain duplicates" }, 400
 			);
-		old.listAvailableLanguages = event.body.listAvailableLanguages;
+		old.listAvailableLanguages = body.listAvailableLanguages;
 	}
 
-	if (event.body.defaultTranslationLanguage) {
+	if (body.defaultTranslationLanguage) {
 		//* Controlla se la lingua di default è tra quelle disponibili
-		if (!event.body.listAvailableLanguages.includes(event.body.defaultTranslationLanguage))
+		if (!body.listAvailableLanguages.includes(body.defaultTranslationLanguage))
 			return formatJSONResponse(
 				{ error: "defaultTranslationLanguage must be in listAvailableLanguages" }, 400
 			);
-		old.defaultTranslationLanguage = event.body.defaultTranslationLanguage;
+		old.defaultTranslationLanguage = body.defaultTranslationLanguage;
 	}
 
 	try {
@@ -70,6 +73,6 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		},
 		200
 	);
-};
+}
 
 export const main = middyfy(authorizer(tenantPut, ["super-admin"]));
