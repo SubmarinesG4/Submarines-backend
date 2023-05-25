@@ -1,7 +1,6 @@
 export default {
 	type: "object",
 	properties: {
-		tenantName: { type: "string" },
 		numberTranslationAvailable: { type: "number" },
 		defaultTranslationLanguage: { type: "string" },
 		listAvailableLanguages: {
@@ -12,7 +11,6 @@ export default {
 		}
 	},
 	required: [
-		"tenantName",
 		"numberTranslationAvailable",
 		"defaultTranslationLanguage",
 		"listAvailableLanguages"
