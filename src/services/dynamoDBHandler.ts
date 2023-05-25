@@ -225,8 +225,8 @@ export class DynamoDBHandler {
         };
 
         if (queryStringParameters.word) {
-            params.FilterExpression += " And contains(#ks, :word)";
-            params.ExpressionAttributeNames["#ks"] = "keySort";
+            params.FilterExpression += " And contains(#tl, :word)";
+            params.ExpressionAttributeNames["#tl"] = "translationKey";
             params.ExpressionAttributeValues[":word"] = { "S": queryStringParameters.word };
         }
         if (queryStringParameters.published) {
