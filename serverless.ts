@@ -14,6 +14,7 @@ import {
 	tenantsGetAll,
 	translationDelete,
 	libraryGet,
+	getLibraryTenantLanguages,
 } from "@functions/index";
 
 const serverlessConfiguration: AWS = {
@@ -105,7 +106,7 @@ const serverlessConfiguration: AWS = {
 		}
 	},
 	// import the function via paths
-	functions: { translationGet, translationPut, translationGetAll, tenantPut, getTenant, inviteUser, deleteUser, deleteTenant, tenantsGetAll, translationDelete, libraryGet },
+	functions: { translationGet, translationPut, translationGetAll, tenantPut, getTenant, inviteUser, deleteUser, deleteTenant, tenantsGetAll, translationDelete, libraryGet, getLibraryTenantLanguages },
 	package: { individually: true },
 	custom: {
 		esbuild: {

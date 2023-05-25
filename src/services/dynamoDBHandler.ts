@@ -292,7 +292,7 @@ export class DynamoDBHandler {
         const params: ScanCommandInput = {
             TableName: environment.dynamo.translations.tableName,
             FilterExpression: "#tk = :tk",
-            ProjectionExpression: "tenantId, listAvailableLanguages",
+            ProjectionExpression: "tenantId, listAvailableLanguages, defaultTranslationLanguage",
             ExpressionAttributeValues: {
                 ":tk": {
                     "S": token
