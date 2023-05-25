@@ -13,11 +13,6 @@ const translationGetAll = async (event) => {
 
 		//* Se ci sono parametri nella query string devo filtrare
 		if (event.queryStringParameters) {
-			//* Controllo che date sia una data valida
-			if (event.queryStringParameters.date && !/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(event.queryStringParameters.date))
-				return formatJSONResponse(
-					{ error: "date must be a valid date" }, 400
-				);
 			//* Controllo che published sia true o false
 			if (event.queryStringParameters.published && event.queryStringParameters.published != "true" && event.queryStringParameters.published != "false")
 				return formatJSONResponse(
