@@ -6,18 +6,21 @@ import schema from './schema';
 import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+	return await logic(event.body, event.pathParameters);
+};
 
+export async function logic (body: any, pathParameters: any) {
 	let newTranslation: Translation = {
-		tenantId: "TRAD#" + event.pathParameters.tenantId,
-		keySort: "TRAD#" + event.pathParameters.tenantId + "#" + event.pathParameters.translationKey,
-		translationKey: event.pathParameters.translationKey,
-		defaultTranslationLanguage: event.body.defaultTranslationLanguage,
-		defaultTranslationinLanguage: event.body.defaultTranslationinLanguage,
-		translations: event.body.translations,
+		tenantId: "TRAD#" + pathParameters.tenantId,
+		keySort: "TRAD#" + pathParameters.tenantId + "#" + pathParameters.translationKey,
+		translationKey: pathParameters.translationKey,
+		defaultTranslationLanguage: body.defaultTranslationLanguage,
+		defaultTranslationinLanguage: body.defaultTranslationinLanguage,
+		translations: body.translations,
 		creationDate: new Date().toISOString(),
 		modificationDate: new Date().toISOString(),
-		modifiedbyUser: event.body.modifiedbyUser,
-		published: event.body.published,
+		modifiedbyUser: body.modifiedbyUser,
+		published: body.published,
 		versionedTranslations: []
 	}
 	const newVersion: Version = {
@@ -52,7 +55,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 	//* se tutte le lingue di traduzione sono presenti tra le disponibili del tenant
 	try {
 
-		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId, numberTranslationAvailable, listAvailableLanguages, defaultTranslationLanguage");
+		const tenant = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "TENANT#" + pathParameters.tenantId, "tenantId, numberTranslationAvailable, listAvailableLanguages, defaultTranslationLanguage");
 		translationLimit = tenant.numberTranslationAvailable;
 		if (!tenant)
 			return formatJSONResponse({ error: "Tenant not found" }, 400);
@@ -70,7 +73,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 
 	//* Controlla se esiste l'utente
 	try {
-		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.modifiedbyUser, "tenantId");
+		const user = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "USER#" + body.modifiedbyUser, "tenantId");
 		if (!user) {
 			return formatJSONResponse({ error: "User not found" }, 400);
 		}
@@ -114,6 +117,6 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		published: newTranslation.published,
 		versionedTranslations: newTranslation.versionedTranslations
 	}, jsonTranslation ? 200 : 201);
-};
+}
 
 export const main = middyfy(authorizer(tranlsationPut, ["super-admin", "admin", "traduttore"]));
