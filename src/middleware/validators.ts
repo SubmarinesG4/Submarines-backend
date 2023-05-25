@@ -12,7 +12,7 @@ const authorizer = (
 	scopes: UseType[]
 ) => {
 		return async (event, context, callback) => {
-/*
+
 			const attributes = event.requestContext.authorizer.claims;
 			const authAttributes: AuthAttributes = {
 				userType: attributes["cognito:groups"],
@@ -37,7 +37,7 @@ const authorizer = (
 				return handler(event, context, callback);
 			}
 
-			*/
+			/*
 			if (event.headers['authorization'] !== "Bearer test")
 				return formatJSONResponse(
 					{
@@ -47,7 +47,7 @@ const authorizer = (
 				);
 			else {
 				return handler(event, context, callback);
-			}
+			}*/
 	};
 };
 

@@ -4,11 +4,11 @@ import { authorizer } from 'src/middleware/validators';
 import schema from './schema';
 import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
-const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+const updateTenant: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 	return logic(event.body, event.pathParameters);
 };
 
-async function logic (body: any, pathParameters: any) {
+export async function logic (body: any, pathParameters: any) {
 	const dynamo = DynamoDBHandler.getInstance();
 
 	if (!body.listAvailableLanguages && !body.defaultTranslationLanguage && !body.numberTranslationAvailable) {
@@ -75,4 +75,4 @@ async function logic (body: any, pathParameters: any) {
 	);
 }
 
-export const main = middyfy(authorizer(tenantPut, ["super-admin"]));
+export const main = middyfy(authorizer(updateTenant, ["super-admin"]));
