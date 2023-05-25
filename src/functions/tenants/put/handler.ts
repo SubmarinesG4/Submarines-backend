@@ -34,11 +34,12 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		);
 
 	var tenant;
-	var users = [];
 	try {
 		tenant = await dynamo.getItem(newTenant.tenantId, newTenant.keySort, "tenantId");
 		if (tenant) {
-			users = await dynamo.getTenantUsers(tenant.tenantId);
+			return formatJSONResponse(
+				{ error: "Tenant already exists" }, 400
+			);
 		}
 		await dynamo.putItem(newTenant);
 	} catch (e) {
@@ -53,11 +54,11 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 			numberTranslationAvailable: newTenant.numberTranslationAvailable,
 			defaultTranslationLanguage: newTenant.defaultTranslationLanguage,
 			listAvailableLanguages: newTenant.listAvailableLanguages,
-			numberTranslationUsed: (await dynamo.getAllTranslations(newTenant.tenantId)).length,
+			numberTranslationUsed: 0,
 			token: newTenant.token,
-			userList: users
+			userList: []
 		},
-		(tenant) ? 200 : 201
+		201
 	);
 };
 

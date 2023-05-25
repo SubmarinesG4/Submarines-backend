@@ -9,3 +9,4 @@ export { default as deleteTenant } from './tenants/delete';
 export { default as tenantsGetAll } from './tenants/getAll';
 export { default as translationDelete } from './translations/delete';
 export { default as libraryGet } from './library/get';
+export { default as updateTenant } from './tenants/update';
