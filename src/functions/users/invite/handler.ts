@@ -8,35 +8,38 @@ import { User } from 'src/types/User';
 
 
 const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-    
+    return await logic (event.body, event.pathParameters, event.requestContext);
+};
+
+export async function logic (body: any, pathParameters: any, requestContext: any) {
 	const dynamo = DynamoDBHandler.getInstance();
 	const cognito = CognitoHandler.getInstance();
 
 
-	//! Check if email and username have the correct format
+	//* Check if email and username have the correct format
 	const regex: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-	if (!regex.test(event.body.userEmail) || !regex.test(event.body.username)) {
+	if (!regex.test(body.userEmail) || !regex.test(body.username)) {
 		return formatJSONResponse(
 			{ error: "userEmail/username has not the correct format", }, 400
 		);
 	}
 
-	if (event.body.userEmail != event.body.username) {
+	if (body.userEmail != body.username) {
 		return formatJSONResponse(
 			{ error: "Username and email must be the same", }, 400
 		);
 	}
 
-	//check only superadmin can create superadmin
-	if(event.body.role == "super-admin" && event.requestContext.authorizer.claims["cognito:groups"][0] != "super-admin"){
+	//* Check only superadmin can create superadmin
+	if(body.role == "super-admin" && requestContext.authorizer.claims["cognito:groups"][0] != "super-admin"){
 		return formatJSONResponse(
 			{ error: "Only superadmin can create superadmin", }, 400
 		);
 	}
 
-	//! Check if tenant exists
+	//* Check if tenant exists
 	try {
-		const tenant = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "TENANT#" + event.pathParameters.tenantId, "tenantId");
+		const tenant = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "TENANT#" + pathParameters.tenantId, "tenantId");
 		if (!tenant) {
 			return formatJSONResponse(
 				{ error: "Tenant does not exist", }, 400
@@ -47,10 +50,10 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		console.log(e);
 	}
 
-	//! Check if user already exists
+	//* Check if user already exists
 	try {
-		const user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.emailUtente, "tenantId");
-		const cognitoUser: any = await cognito.getUser(event.body.username);
+		const user = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "USER#" + body.emailUtente, "tenantId");
+		const cognitoUser: any = await cognito.getUser(body.username);
 		console.log("cognitoUser: "+cognitoUser);
 		if (user || cognitoUser) {
 			return formatJSONResponse(
@@ -63,8 +66,8 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	}
 
 	try {
-		cognito.createUser(event.body.userEmail, event.body.name, event.body.lastName, event.pathParameters.tenantId);
-		cognito.addUserToGroup(event.body.userEmail, event.body.role)
+		cognito.createUser(body.userEmail, body.name, body.lastName, pathParameters.tenantId);
+		cognito.addUserToGroup(body.userEmail, body.role)
 	} catch (e) {
 		return formatJSONResponse(
 			{ error: e, }, 500
@@ -72,20 +75,20 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 	}
 
 	const newUser: User = {
-		tenantId: "TRAD#" + event.pathParameters.tenantId,
-		keySort: "USER#" + event.body.username,
-		userEmail: event.body.userEmail,
-		username: event.body.username,
-		name: event.body.name,
-		lastName: event.body.lastName,
+		tenantId: "TRAD#" + pathParameters.tenantId,
+		keySort: "USER#" + body.username,
+		userEmail: body.userEmail,
+		username: body.username,
+		name: body.name,
+		lastName: body.lastName,
 		creationDate: new Date().toISOString(),
-		role: event.body.role,
+		role: body.role,
 	}
 
 	try {
 		dynamo.putItem(newUser);
 	} catch (e) {
-		cognito.deleteUser(event.body.username); 		//? Se l'utente non si salva nel DB lo tolgo anche da Cognito
+		cognito.deleteUser(body.username); 		//? Se l'utente non si salva nel DB lo tolgo anche da Cognito
 		return formatJSONResponse(
 			{ error: e, }, 400
 		);
@@ -101,7 +104,6 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 			role: newUser.role,
 		}, 200
 	);
-
-};
+}
 
 export const main = middyfy(authorizer(inviteUser, ["super-admin", "admin"]));

@@ -6,28 +6,30 @@ import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 import { CognitoHandler } from 'src/services/cognitoHandler';
 
 const userDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+	return await logic(event.body, event.pathParameters);
+};
 
+export async function logic (body: any, pathParameters: any) {
 	const dynamo = DynamoDBHandler.getInstance();
 	const cognito = CognitoHandler.getInstance();
 
 	var user: any;
 
 	try {
-		user = await dynamo.getItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.username, "tenantId");
-		const cognitoUser: any = await cognito.getUser(event.body.username);
-		console.log("congnitouser: "+ cognitoUser);
+		user = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "USER#" + body.username, "tenantId");
+		const cognitoUser: any = await cognito.getUser(body.username);
 		if (!user || !cognitoUser) {
 			return formatJSONResponse({}, 404);
 		}
-		cognito.deleteUser(event.body.username);
-		await dynamo.deleteItem("TRAD#" + event.pathParameters.tenantId, "USER#" + event.body.username);
+		cognito.deleteUser(body.username);
+		await dynamo.deleteItem("TRAD#" + pathParameters.tenantId, "USER#" + body.username);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e, }, e.statusCode
+			{ error: e, }, 400
 		);
 	}
 
 	return formatJSONResponse({}, 200);
-};
+}
 
 export const main = middyfy(authorizer(userDelete, ["super-admin", "admin"]));
