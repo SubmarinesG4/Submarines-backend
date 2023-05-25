@@ -1,6 +1,6 @@
 import { GetCommand, QueryCommand, BatchWriteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ScanCommand } from "@aws-sdk/client-dynamodb";
-import { environment } from '../../src/environment/environment';
+import { environment } from '../src/environment/environment';
 
 export function setupMock_getTenant (ddbMock: any) {
     ddbMock.on(GetCommand, {
@@ -32,9 +32,7 @@ export function setupMock_getTenantError (ddbMock: any) {
             tenantId: "TRAD#tenant1",
             keySort: "TENANT#tenant1",
         },
-    }).resolves({
-        Item: undefined
-    })
+    }).resolves(undefined)
 }
 
 export function setupMock_getTenantUsers (ddbMock: any) {
