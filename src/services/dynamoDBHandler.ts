@@ -115,7 +115,7 @@ export class DynamoDBHandler {
         }
     }
 
-    async getAllTenants() {
+    async getAllTenants(word?: string) {
         const params: ScanCommandInput = {
             TableName: environment.dynamo.translations.tableName,
             ConsistentRead: true,
@@ -128,6 +128,12 @@ export class DynamoDBHandler {
                 "#ks": "keySort"
             }
         };
+
+        if (word) {
+            params.FilterExpression += " And contains(#tn, :word)";
+            params.ExpressionAttributeNames["#tn"] = "tenantName";
+            params.ExpressionAttributeValues[":word"] = { "S": word };
+        }
         try {
             const data = await this.dbClient.send(new ScanCommand(params));
             let items = data.Items;

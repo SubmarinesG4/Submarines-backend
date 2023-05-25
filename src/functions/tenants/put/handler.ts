@@ -14,11 +14,11 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 	const newTenant: Tenant = {
 		tenantId: "TRAD#" + tenantId,
 		keySort: "TENANT#" + tenantId,
-		tenantName: event.body.tenantName,
+		tenantName: tenantId,
 		numberTranslationAvailable: event.body.numberTranslationAvailable,
 		defaultTranslationLanguage: event.body.defaultTranslationLanguage,
 		listAvailableLanguages: event.body.listAvailableLanguages,
-		token: getUuid(tenantId), //! ????????
+		token: getUuid(tenantId)
 	};
 
 	//* Controlla se la lingua di default è tra quelle disponibili

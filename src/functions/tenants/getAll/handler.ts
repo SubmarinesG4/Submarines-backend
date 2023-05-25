@@ -3,16 +3,18 @@ import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
 import { DynamoDBHandler } from "src/services/dynamoDBHandler";
 
-const tenantsGetAll = async () => {
+const tenantsGetAll = async (event) => {
 
 	const dynamo = DynamoDBHandler.getInstance();
 
 	try {
-		const result = await dynamo.getAllTenants();
-		if (result.length === 0)
-			return formatJSONResponse(
-				{}, 404
-			);
+		var result: any;
+
+		if (event.queryStringParameters && event.queryStringParameters.word)
+			result = await dynamo.getAllTenants(event.queryStringParameters.word);
+		else
+			result = await dynamo.getAllTenants();
+
 		return formatJSONResponse(
 			{ tenants: result },
 			200
