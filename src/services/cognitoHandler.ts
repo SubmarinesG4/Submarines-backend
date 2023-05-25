@@ -25,7 +25,7 @@ export class CognitoHandler {
         return this.instance;
     }
 
-    createUser (email: string, name: string, surname: string) {
+    createUser (email: string, name: string, surname: string, tenantId: string) {
         const params = {
             UserPoolId: "eu-central-1_OcyZlYZEj",
             Username: email,
@@ -41,6 +41,10 @@ export class CognitoHandler {
                 {
                     Name: 'given_name',
                     Value: name
+                },
+                {
+                    Name: 'custom:tenantId',
+                    Value: tenantId
                 }
             ]
         };
