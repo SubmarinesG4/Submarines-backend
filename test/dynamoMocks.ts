@@ -1,4 +1,4 @@
-import { GetCommand, QueryCommand, BatchWriteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, QueryCommand, BatchWriteCommand, PutCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { ScanCommand } from "@aws-sdk/client-dynamodb";
 import { environment } from '../src/environment/environment';
 
@@ -70,7 +70,8 @@ export function setupMock_getTenantTranslations (ddbMock: any) {
         }
     })
     .resolves({
-        Items: [{tenantId: "TRAD#tenant1", keySort: "TRAD#tenant1#key", translationKey: "key", defaultTranslationLanguage: "en", defaultTranslationinLanguage: "hello", published: true, creationDate: "data" }]
+        Items: [{translationKey: "key", defaultTranslationLanguage: "en", defaultTranslationinLanguage: "hello", published: true, creationDate: "data" },
+            {tenantId: "TRAD#tenant1", keySort: "TRAD#tenant1#key2", translationKey: "key2", defaultTranslationLanguage: "it", defaultTranslationinLanguage: "mario", published: false, creationDate: "data2" }]
     });
 }
 
@@ -148,4 +149,104 @@ export function setupMock_putItem(ddbMock: any) {
         Item: {},
     })
     .resolves({});
+}
+
+export function setupMock_getTranslation(ddbMock: any) {
+
+    ddbMock
+    .on(GetCommand, {
+        TableName: 'translations',
+        Key: { 
+            tenantId: 'TRAD#tenant1',
+            keySort: 'TRAD#tenant1#key'
+        },
+        ProjectionExpression: 'tenantId',
+        ExpressionAttributeNames: undefined
+    })
+    .resolves({
+        Item: {
+            tenantId: "TRAD#tenant1",
+        }
+    })
+    .on(GetCommand, {
+        TableName: 'translations',
+        Key: { 
+            tenantId: 'TRAD#tenant1',
+            keySort: 'TRAD#tenant1#key'
+        },
+        ProjectionExpression: "defaultTranslationLanguage, defaultTranslationinLanguage, translations, creationDate, modificationDate, modifiedbyUser, published, versionedTranslations, translationKey",
+        ExpressionAttributeNames: undefined
+    })
+    .resolves({
+        Item: {
+            defaultTranslationLanguage: "en",
+            defaultTranslationinLanguage: "hello",
+            translations: {},
+            creationDate: "data",
+            modificationDate: "data",
+            modifiedbyUser: "user",
+            published: true,
+            versionedTranslations: {},
+            translationKey: "key"
+        }
+    })
+}
+
+export function setupMock_getTranslationError(ddbMock: any) {
+    ddbMock.on(GetCommand, {
+        TableName: 'translations',
+        Key: { 
+            tenantId: 'TRAD#tenant1',
+            keySort: 'TRAD#tenant1#key'
+        },
+        ProjectionExpression: 'tenantId',
+        ExpressionAttributeNames: undefined
+    })
+    .resolves(undefined)
+    .on(GetCommand, {
+        TableName: 'translations',
+        Key: { 
+            tenantId: 'TRAD#tenant1',
+            keySort: 'TRAD#tenant1#key'
+        },
+        ProjectionExpression: "defaultTranslationLanguage, defaultTranslationinLanguage, translations, creationDate, modificationDate, modifiedbyUser, published, versionedTranslations, translationKey",
+        ExpressionAttributeNames: undefined
+    })
+    .resolves(undefined)
+}
+
+export function setupMock_deleteTranslation(ddbMock: any) {
+    ddbMock.on(DeleteCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        Key: {
+            tenantId: "TRAD#tenant1",
+            keySort: "TRAD#tenant1#key",
+        },
+    }).resolves({})
+}
+
+export function setupMock_FilterTranslations (ddbMock: any) {
+    ddbMock
+    .on(ScanCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        ProjectionExpression: 'translationKey, defaultTranslationLanguage, defaultTranslationinLanguage, creationDate, published',
+        FilterExpression: '#id = :tenantId And begins_with(#ks, :starts) And #pub = :published',
+        ExpressionAttributeValues: {
+            ':tenantId': { S: 'TRAD#tenant1' },
+            ':starts': { S: 'TRAD#' },
+            ':published': { BOOL: 'true' }
+        },
+        ExpressionAttributeNames: { '#id': 'tenantId', '#ks': 'keySort', '#pub': 'published' }
+    })
+    .resolves({
+        Items:[
+            {
+                defaultTranslationLanguage: { S: 'en' },
+                published: { BOOL: true },
+                translationKey: { S: 'key' },
+                creationDate: { S: 'data' },
+                defaultTranslationinLanguage: { S: 'hello' }
+            }
+        ]
+    });
 }

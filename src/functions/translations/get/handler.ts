@@ -17,7 +17,7 @@ export async function logic (pathParameters: any) {
 	try {
 		const translation = await dynamo.getItem("TRAD#" + tenantId, "TRAD#" + tenantId + "#" + translationKey, "defaultTranslationLanguage, defaultTranslationinLanguage, translations, creationDate, modificationDate, modifiedbyUser, published, versionedTranslations, translationKey");
 		if (!translation) {
-			return formatJSONResponse({}, 404);
+			return formatJSONResponse({error: "Tenant not found"}, 404);
 		}
 		return formatJSONResponse(translation, 200);
 	} catch (error) {

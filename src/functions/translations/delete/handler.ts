@@ -17,7 +17,7 @@ export async function logic (pathParameters: any) {
 	try {
 		const user = await dynamo.getItem("TRAD#" + tenantId, "TRAD#" + tenantId + "#" + translationKey, "tenantId");
 		if (!user) {
-			return formatJSONResponse({}, 404);
+			return formatJSONResponse({ error: "Tenant not found"}, 404);
 		}
 		await dynamo.deleteItem("TRAD#" + tenantId, "TRAD#" + tenantId + "#" + translationKey);
 		return formatJSONResponse({}, 200);

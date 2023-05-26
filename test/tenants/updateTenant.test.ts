@@ -20,7 +20,7 @@ beforeEach(() => {
 
 describe('Update tenant', function () {
 
-    const rightreponse = { "tenantName": "tenant1", "numberTranslationAvailable": 500, "numberTranslationUsed": 1,
+    const rightreponse = { "tenantName": "tenant1", "numberTranslationAvailable": 500, "numberTranslationUsed": 2,
         "defaultTranslationLanguage": "it", "listAvailableLanguages": ["en", "it","fr"], "token": "",
         "users": [{ "userEmail": "emailutente1@gmail.com", "username": "userutente1", "name": "nome",
             "lastName": "cognome", "creationDate": "data"}]
@@ -32,7 +32,7 @@ describe('Update tenant', function () {
         "tenantId": "tenant1"
     }
 
-    it.skip('200 success', async () => {
+    it('200 success', async () => {
         setupMock_getTenant(ddbMock);
         setupMock_putItem(ddbMock);
         setupMock_getTenantTranslations(ddbMock);
@@ -42,7 +42,7 @@ describe('Update tenant', function () {
         expect(JSON.parse(result.body)).toEqual(rightreponse);
     });
     
-    it.skip('400 nothing to update', async () => {
+    it('400 nothing to update', async () => {
         const result: any = await logic({},{});
         expect(result.statusCode).toEqual(400);
         expect(JSON.parse(result.body)).toEqual({ error: "Nothing to update" });
@@ -52,7 +52,7 @@ describe('Update tenant', function () {
         "tenantId": "tenant2"
     }
 
-    it.skip('404 nothing to update', async () => {
+    it('404 nothing to update', async () => {
         setupMock_getTenantError(ddbMock);
         const result: any = await logic(bodySuccess, pathParamsNothingToUpdate);
         expect(result.statusCode).toEqual(404);
@@ -63,7 +63,7 @@ describe('Update tenant', function () {
         "numberTranslationAvailable": 500, "listAvailableLanguages": ["en", "it", "it"],
     }
 
-    it.skip('400 duplicates in listAvailableLanguages', async () => {
+    it('400 duplicates in listAvailableLanguages', async () => {
         setupMock_getTenant(ddbMock);
         const result: any = await logic(bodyDuplicates, pathParamsSuccess);
         expect(result.statusCode).toEqual(400);
@@ -76,7 +76,7 @@ describe('Update tenant', function () {
         "defaultTranslationLanguage": "fr"
     }
 
-    it.skip('400 defaultTranslation not in list', async () => {
+    it('400 defaultTranslation not in list', async () => {
         setupMock_getTenant(ddbMock);
         const result: any = await logic(bodyNotIn, pathParamsSuccess);
         expect(result.statusCode).toEqual(400);
