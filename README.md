@@ -1,4 +1,4 @@
-![CI](https://github.com/SubmarinesG4/Submarines-backend/actions/workflows/main.yml/badge.svg)  
+![CI](https://github.com/SubmarinesG4/Submarines-backend/actions/workflows/build.yml/badge.svg)  
 
 
 
