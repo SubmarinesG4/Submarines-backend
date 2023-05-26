@@ -72,6 +72,25 @@ export function setupMock_getTenantTranslations (ddbMock: any) {
     .resolves({
         Items: [{translationKey: "key", defaultTranslationLanguage: "en", defaultTranslationinLanguage: "hello", published: true, creationDate: "data" },
             {tenantId: "TRAD#tenant1", keySort: "TRAD#tenant1#key2", translationKey: "key2", defaultTranslationLanguage: "it", defaultTranslationinLanguage: "mario", published: false, creationDate: "data2" }]
+    })
+    .on(QueryCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        ProjectionExpression: "translations, published, translationKey",
+        KeyConditionExpression: "#tenantId = :pk and begins_with(#keySort, :sk)",
+        ExpressionAttributeNames: {
+            "#tenantId": "tenantId",
+            "#keySort": "keySort"
+        },
+        ExpressionAttributeValues: {
+            ":pk": "TRAD#tenant1",
+            ":sk": "TRAD#tenant1"
+        }
+    })
+    .resolves({
+        Items: [
+            { translationKey: 'key', translations: [ { language: 'it', content: 'ciao' },
+            { language: 'en', content: 'hello' }], published: true }
+          ]
     });
 }
 
@@ -246,6 +265,28 @@ export function setupMock_FilterTranslations (ddbMock: any) {
                 translationKey: { S: 'key' },
                 creationDate: { S: 'data' },
                 defaultTranslationinLanguage: { S: 'hello' }
+            }
+        ]
+    });
+
+
+}
+
+export function setupMock_getTenantByToken (ddbMock: any) {
+    ddbMock
+    .on(ScanCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        FilterExpression: '#tk = :tk',
+        ProjectionExpression: 'tenantId, listAvailableLanguages, defaultTranslationLanguage',
+        ExpressionAttributeValues: { ':tk': { S: 'provatoken' } },
+        ExpressionAttributeNames: { '#tk': 'token' }
+    })
+    .resolves({
+        Items:[
+            {
+              listAvailableLanguages: { L: [ {S: 'en'}, {S: 'it'} ] },
+              tenantId: { S: 'TRAD#tenant1' },
+              defaultTranslationLanguage: { S: 'en' }
             }
         ]
     });
