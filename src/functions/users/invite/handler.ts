@@ -66,8 +66,8 @@ export async function logic (body: any, pathParameters: any, requestContext: any
 	}
 
 	try {
-		cognito.createUser(body.userEmail, body.name, body.lastName, pathParameters.tenantId);
-		cognito.addUserToGroup(body.userEmail, body.role)
+		//cognito.createUser(body.userEmail, body.name, body.lastName, pathParameters.tenantId);
+		//cognito.addUserToGroup(body.userEmail, body.role)
 	} catch (e) {
 		return formatJSONResponse(
 			{ error: e, }, 500

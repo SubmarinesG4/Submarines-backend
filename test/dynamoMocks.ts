@@ -26,13 +26,20 @@ export function setupMock_getTenant (ddbMock: any) {
 }
 
 export function setupMock_getTenantError (ddbMock: any) {
-    ddbMock.on(GetCommand, {
+    ddbMock
+    .on(GetCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        Key: { tenantId: 'TRAD#tenant1', keySort: 'TENANT#tenant1' },
+        ProjectionExpression: 'tenantId, numberTranslationAvailable, listAvailableLanguages, defaultTranslationLanguage',
+        ExpressionAttributeNames: undefined
+    }).resolves(undefined)
+    .on(GetCommand, {
         TableName: environment.dynamo.translations.tableName,
         Key: {
             tenantId: "TRAD#tenant1",
             keySort: "TENANT#tenant1",
         },
-    }).resolves(undefined)
+    }).resolves(undefined);
 }
 
 export function setupMock_getTenantUsers (ddbMock: any) {
@@ -189,7 +196,7 @@ export function setupMock_getTranslation(ddbMock: any) {
             versionedTranslations: {},
             translationKey: "key"
         }
-    })
+    });
 }
 
 export function setupMock_getTranslationError(ddbMock: any) {
@@ -213,6 +220,16 @@ export function setupMock_getTranslationError(ddbMock: any) {
         ExpressionAttributeNames: undefined
     })
     .resolves(undefined)
+    .on(GetCommand, {
+        TableName: 'translations',
+        Key: { 
+            tenantId: 'TRAD#tenant1',
+            keySort: 'TRAD#tenant1#key'
+        },
+        ProjectionExpression: "versionedTranslations, creationDate",
+        ExpressionAttributeNames: undefined
+    })
+    .resolves(undefined);
 }
 
 export function setupMock_deleteTranslation(ddbMock: any) {
@@ -249,4 +266,19 @@ export function setupMock_FilterTranslations (ddbMock: any) {
             }
         ]
     });
+}
+
+export function setupMock_getUser (ddbMock: any) {
+    ddbMock.on(GetCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        Key: {
+            tenantId: 'TRAD#tenant1',
+            keySort: 'USER#email@email.com'
+        },
+        ProjectionExpression: 'tenantId',
+        ExpressionAttributeNames: undefined
+    }).resolves({
+        Item: {
+        tenantId: "TRAD#tenant1",
+    }});
 }
