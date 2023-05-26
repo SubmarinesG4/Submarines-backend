@@ -139,6 +139,46 @@ export function setupMock_GetAllTenants(ddbMock: any) {
             tenantName: 'tenant1',
             defaultTranslationLanguage: 'en'
         }]
+    })
+    .on(ScanCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        ConsistentRead: true,
+        ProjectionExpression: "tenantName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage",
+        FilterExpression: 'begins_with(#ks, :ks)',
+        ExpressionAttributeValues: {
+            ':ks': { S: 'TENANT#'}
+        },
+        ExpressionAttributeNames: {
+            "#ks": "keySort"
+        }
+    })
+    .resolves({
+        Items: [{
+            numberTranslationAvailable: { N: 100},
+            tenantName: {S:'tenant1'},
+            defaultTranslationLanguage: {S:'en'}
+        }]
+    })
+    .on(ScanCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        ConsistentRead: true,
+        ProjectionExpression: "tenantName, numberTranslationAvailable, numberTranslationUsed, defaultTranslationLanguage",
+        FilterExpression: 'begins_with(#ks, :ks) And contains(#tn, :word)',
+        ExpressionAttributeValues: {
+            ':ks': { S: 'TENANT#'},
+            ':word': { S: 'tenant1' }
+        },
+        ExpressionAttributeNames: {
+            "#ks": "keySort",
+            "#tn": "tenantName"
+        }
+    })
+    .resolves({
+        Items: [{
+            numberTranslationAvailable: { N: 100},
+            tenantName: {S:'tenant1'},
+            defaultTranslationLanguage: {S:'en'}
+        }]
     });
 }
 
@@ -289,5 +329,49 @@ export function setupMock_getTenantByToken (ddbMock: any) {
               defaultTranslationLanguage: { S: 'en' }
             }
         ]
+    })
+    .on(ScanCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        FilterExpression: '#tk = :tk',
+        ProjectionExpression: 'tenantId, listAvailableLanguages, defaultTranslationLanguage',
+        ExpressionAttributeValues: { ':tk': { S: 'provatokensbagliato' } },
+        ExpressionAttributeNames: { '#tk': 'token' }
+    })
+    .resolves({
+        Items:[{
+            listAvailableLanguages: { L: [ {S: 'en'}, {S: 'it'} ] },
+            tenantId: { S: 'TRAD#tenant1' },
+            defaultTranslationLanguage: { S: 'en' }
+          },{
+            listAvailableLanguages: { L: [ {S: 'en'}, {S: 'it'} ] },
+            tenantId: { S: 'TRAD#tenant1' },
+            defaultTranslationLanguage: { S: 'en' }
+          }]
+    })
+    .on(ScanCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        FilterExpression: '#tk = :tk',
+        ProjectionExpression: 'tenantId, listAvailableLanguages, defaultTranslationLanguage',
+        ExpressionAttributeValues: { ':tk': { S: 'provatokenlingue' } },
+        ExpressionAttributeNames: { '#tk': 'token' }
+    })
+    .resolves({
+        Items:[{
+            
+            tenantId: { S: 'TRAD#tenant1' },
+            defaultTranslationLanguage: { S: 'en' }
+          }]
+    });
+}
+
+
+export function setupMock_deleteTenant (ddbMock: any) {
+    ddbMock
+    .on(DeleteCommand,{
+        TableName: environment.dynamo.translations.tableName,
+        RequestItems:{ translations: { DeleteRequest: {Key: 'tenant1'} }}
+    })
+    .resolves({
+
     });
 }
