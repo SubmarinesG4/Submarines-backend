@@ -6,18 +6,21 @@ import schema from './schema';
 import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+	return await logic(event.body, event.pathParameters);
+};
 
+export async function logic(body: any, pathParameters: any) {
 	const dynamo = DynamoDBHandler.getInstance();
 	const getUuid = require('uuid-by-string');
 
-	const tenantId = event.pathParameters.tenantId as string;
+	const tenantId = pathParameters.tenantId as string;
 	const newTenant: Tenant = {
 		tenantId: "TRAD#" + tenantId,
 		keySort: "TENANT#" + tenantId,
 		tenantName: tenantId,
-		numberTranslationAvailable: event.body.numberTranslationAvailable,
-		defaultTranslationLanguage: event.body.defaultTranslationLanguage,
-		listAvailableLanguages: event.body.listAvailableLanguages,
+		numberTranslationAvailable: body.numberTranslationAvailable,
+		defaultTranslationLanguage: body.defaultTranslationLanguage,
+		listAvailableLanguages: body.listAvailableLanguages,
 		token: getUuid(tenantId)
 	};
 
@@ -60,6 +63,6 @@ const tenantPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (even
 		},
 		201
 	);
-};
+}
 
 export const main = middyfy(authorizer(tenantPut, ["super-admin"]));

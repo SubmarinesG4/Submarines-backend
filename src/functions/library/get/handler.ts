@@ -1,14 +1,18 @@
-import { formatJSONResponse } from "@libs/api-gateway";
+import { ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
 import { authorizer } from "src/middleware/validators";
 import { DynamoDBHandler } from "src/services/dynamoDBHandler";
+import schema from "./schema";
 
-const translationGetAll = async (event) => {
+const translationGetAll: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+	return await logic(event.pathParameters);
+};
 
+export async function logic(pathParameters: any) {
 	const dynamo = DynamoDBHandler.getInstance();
 
-	const language = event.pathParameters.language as string;
-	const token = event.pathParameters.token as string;
+	const language = pathParameters.language as string;
+	const token = pathParameters.token as string;
 
 	var tenant;
 	//? Ricerca del tenant corrispondente al token
@@ -57,7 +61,6 @@ const translationGetAll = async (event) => {
 		throw e;
 	}
 
-	
 };
 
 export const main = middyfy(
