@@ -68,7 +68,10 @@ export class DynamoDBHandler {
         //* Esegue il comando
         try {
             const data = await this.dbClient.send(new GetCommand(params));
-            return data.Item;
+            if (data && data.Item)
+                return data.Item;
+            else
+                return undefined;
         } catch (err) {
             console.log("Error", err.stack);
             throw { err, tenantId };
@@ -245,6 +248,7 @@ export class DynamoDBHandler {
             params.ExpressionAttributeNames["#creDate"] = "creationDate";
             params.ExpressionAttributeValues[":date"] = { "S": queryStringParameters.date };
         }
+        console.log(params);
         
         try {
             const data = await this.dbClient.send(new ScanCommand(params));
