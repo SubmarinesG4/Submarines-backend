@@ -1,3 +1,7 @@
+![CI](https://github.com/SubmarinesG4/Submarines-backend/actions/workflows/main.yml/badge.svg)  
+
+
+
 # Serverless - AWS Node.js Typescript
 
 Progetto generato usando il template `aws-nodejs-typescript` di [Serverless framework](https://www.serverless.com/).
