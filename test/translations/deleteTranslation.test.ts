@@ -16,7 +16,7 @@ beforeEach(() => {
     ddbMock.reset();
 });
 
-describe('Update tenant', function () {
+describe('Delete translations', function () {
 
     const pathParamsSuccess = {
         "tenantId": "tenant1",
