@@ -12,6 +12,15 @@ jest.mock('@middy/core', () => {
         }
     }
 });
+
+//* Setup mock cognito
+const AWS = require('aws-sdk');
+jest.mock('aws-sdk');
+    
+AWS.CognitoIdentityServiceProvider.prototype.adminDeleteUser = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({})
+    });
+
 beforeEach(() => {
     ddbMock.reset();
 });
@@ -19,12 +28,6 @@ beforeEach(() => {
 
 
 describe('Delete tenant', function () {
-/*
-    const rightreponse = { "tenantName": "tenant1", "numberTranslationAvailable": 500, "numberTranslationUsed": 2,
-        "defaultTranslationLanguage": "it", "listAvailableLanguages": ["en", "it","fr"], "token": "",
-        "users": [{ "userEmail": "emailutente1@gmail.com", "username": "userutente1", "name": "nome",
-            "lastName": "cognome", "creationDate": "data"}]
-    }*/
     
     const pathParamsSuccess = {
         "tenantId": "tenant1"
