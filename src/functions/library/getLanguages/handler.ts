@@ -24,7 +24,7 @@ export async function logic(pathParameters: any) {
 		}
 		tenant = response[0];
 	} catch (e) {
-		console.log(e);
+		//console.log(e);
 		throw e;
 	}
 
@@ -43,7 +43,7 @@ export async function logic(pathParameters: any) {
 			}, 200
 		);
 	} catch (e) {
-		console.log(e);
+		//console.log(e);
 		throw e;
 	}
 }
