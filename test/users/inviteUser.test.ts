@@ -20,11 +20,11 @@ jest
 
 jest
 .spyOn(CognitoHandler.prototype, 'createUser')
-.mockImplementation(() => {});
+.mockResolvedValue({} as any);
 
 jest
 .spyOn(CognitoHandler.prototype, 'addUserToGroup')
-.mockImplementation(() => {});
+.mockResolvedValue({} as any);
 
 beforeEach(() => {
     ddbMock.reset();
