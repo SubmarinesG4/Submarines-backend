@@ -5,6 +5,7 @@ type Roles = "admin" | "super-admin" | "traduttore"
 
 interface APIGatewayProxyEventWithEmail extends APIGatewayProxyEvent {
 	userRoles?: Roles[]
+	userEmail?: string
 }
 
 type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEventWithEmail, 'body'> & { body: FromSchema<S> }

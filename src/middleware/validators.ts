@@ -24,6 +24,7 @@ const authorizer = (
 			userMail: attributes.email,
 		};
 		event.userRoles = authAttributes.userType;
+		event.userEmail = authAttributes.userMail
 
 		var flag: boolean = false;
 		for (const scope of scopes) {

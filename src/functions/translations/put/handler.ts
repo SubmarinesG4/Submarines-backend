@@ -7,7 +7,7 @@ import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
 	if (testAuth(event.requestContext.authorizer.claims, event.pathParameters) || event.userRoles.includes("super-admin"))
-		return await logic(event.body, event.pathParameters);
+		return await logic(event.body, event.pathParameters, event.userEmail, event.userRoles.includes("super-admin"));
 	else
 		return formatJSONResponse(
 			{
@@ -17,7 +17,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		);
 };
 
-export async function logic(body: any, pathParameters: any) {
+export async function logic(body: any, pathParameters: any, userEmail: string, isSuperAdmin: boolean) {
 	const dataCreazione: string = new Date().toISOString();
 	let newTranslation: Translation = {
 		tenantId: "TRAD#" + pathParameters.tenantId,
@@ -81,18 +81,19 @@ export async function logic(body: any, pathParameters: any) {
 	}
 
 	//* Controlla se esiste l'utente
-	try {
-		const user = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "USER#" + body.modifiedbyUser, "tenantId");
-		if (!user) {
-			return formatJSONResponse({ error: "User not found" }, 400);
+	if (!isSuperAdmin) {
+		try {
+			const user = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "USER#" + userEmail, "tenantId");
+			if (!user) {
+				return formatJSONResponse({ error: "User not found" }, 400);
+			}
+		} catch (e) {
+			return formatJSONResponse({ error: e }, e.statusCode);
 		}
-	} catch (e) {
-		return formatJSONResponse({ error: e }, e.statusCode);
 	}
 
 	let jsonTranslation: any;
 	try {
-
 		let versions: Array<Version> = [];
 
 		//* Controlla se esiste già la traduzione (cioè è da modificare)
