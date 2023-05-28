@@ -39,6 +39,6 @@ describe('Get translation', function () {
         setupMock_getTranslationError(ddbMock);
         const result: any = await logic(pathParamsSuccess);
         expect(result.statusCode).toEqual(404);
-        expect(JSON.parse(result.body)).toEqual({ error: "Tenant not found"});
+        expect(JSON.parse(result.body)).toEqual({ error: "Translation not found"});
     });
 });

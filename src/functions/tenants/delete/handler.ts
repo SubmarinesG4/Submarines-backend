@@ -1,6 +1,6 @@
 import { ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
-import { authorizer, testAuth } from 'src/middleware/validators';
+import { authorizer } from 'src/middleware/validators';
 import { CognitoHandler } from 'src/services/cognitoHandler';
 import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 import schema from './schema';
