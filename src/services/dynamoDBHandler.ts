@@ -248,7 +248,6 @@ export class DynamoDBHandler {
             params.ExpressionAttributeNames["#creDate"] = "creationDate";
             params.ExpressionAttributeValues[":date"] = { "S": queryStringParameters.date };
         }
-        console.log(params);
         
         try {
             const data = await this.dbClient.send(new ScanCommand(params));
@@ -262,7 +261,6 @@ export class DynamoDBHandler {
 	}
 
     async setTranslationPublished(tenantId: string, keySort: string, publish: boolean) {
-        console.log("\n\n" + tenantId, keySort, publish + "\n\n");
         const params: UpdateItemCommandInput = {
             "TableName": environment.dynamo.translations.tableName,
             "Key": {

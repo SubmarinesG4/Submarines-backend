@@ -48,13 +48,10 @@ export class CognitoHandler {
                 }
             ]
         };
-        this.cognito.adminCreateUser(params, function (err, result) {
+        this.cognito.adminCreateUser(params, function (err) {
             if (err) {
                 console.log('err:', err);
                 throw err;
-            } else {
-                console.log('result:', result);
-                console.log('User created successfully');
             }
         });
     }
@@ -65,9 +62,8 @@ export class CognitoHandler {
             UserPoolId: "eu-central-1_OcyZlYZEj", 
             Username: email
         };
-        this.cognito.adminAddUserToGroup(params, function(err, data) {
+        this.cognito.adminAddUserToGroup(params, function(err) {
             if (err) console.log(err, err.stack); // an error occurred
-            else     console.log(data);           // successful response
         });
     }
 
@@ -77,13 +73,11 @@ export class CognitoHandler {
                 UserPoolId: "eu-central-1_OcyZlYZEj", /* required */
                 Username: username /* required */
             };
-            this.cognito.adminDeleteUser(params, function(err, data) {
+            this.cognito.adminDeleteUser(params, function(err) {
                 if (err) {
                     console.log(err, err.stack);
                     throw err; 
                 }
-                else
-                    console.log(data);
             });
         } catch (e) {
             throw e;

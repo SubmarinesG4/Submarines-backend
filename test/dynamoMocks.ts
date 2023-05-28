@@ -395,7 +395,6 @@ export function setupMock_getTenantByToken (ddbMock: any) {
     });
 }
 
-
 export function setupMock_deleteTenant (ddbMock: any) {
     ddbMock
     .on(DeleteCommand,{

@@ -21,7 +21,6 @@ export async function logic(pathParameters: any) {
 
 		//elimino utenti da cognito
 		(await dynamo.getTenantUsers("TRAD#" + pathParameters.tenantId)).map((i) => {
-			console.log("cancello cognito utente: "+ i["username"]);
 			cognito.deleteUser(i["username"]);
 		});
 
