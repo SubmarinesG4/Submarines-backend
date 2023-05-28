@@ -90,7 +90,7 @@ export function setupMock_getTenantTranslations (ddbMock: any) {
         Items: [
             { translationKey: 'key', translations: [ { language: 'it', content: 'ciao' },
             { language: 'en', content: 'hello' }], published: true }
-          ]
+        ]
     });
 }
 
@@ -249,6 +249,37 @@ export function setupMock_getTranslation(ddbMock: any) {
             translationKey: "key"
         }
     })
+    .on(GetCommand, {
+        TableName: 'translations',
+        Key: { 
+            tenantId: 'TRAD#tenant1',
+            keySort: 'TRAD#tenant1#key'
+        },
+        ProjectionExpression: "versionedTranslations, creationDate",
+        ExpressionAttributeNames: undefined
+    })
+    .resolves({
+        Item: {
+            creationDate: "data",
+            versionedTranslations: [
+                {
+                    modificationDate: "",
+                    modifiedbyUser: "email@email.com",
+                    translations: [
+                        {
+                            language: "it",
+                            content: "ciao"
+                        },
+                        {
+                            language: "en",
+                            content: "hello"
+                        }
+                    ],
+                    published: true
+                }
+            ]
+        }
+    })
 }
 
 export function setupMock_getTranslationError(ddbMock: any) {
@@ -324,9 +355,9 @@ export function setupMock_getTenantByToken (ddbMock: any) {
     .resolves({
         Items:[
             {
-              listAvailableLanguages: { L: [ {S: 'en'}, {S: 'it'} ] },
-              tenantId: { S: 'TRAD#tenant1' },
-              defaultTranslationLanguage: { S: 'en' }
+                listAvailableLanguages: { L: [ {S: 'en'}, {S: 'it'} ] },
+                tenantId: { S: 'TRAD#tenant1' },
+                defaultTranslationLanguage: { S: 'en' }
             }
         ]
     })
@@ -342,11 +373,11 @@ export function setupMock_getTenantByToken (ddbMock: any) {
             listAvailableLanguages: { L: [ {S: 'en'}, {S: 'it'} ] },
             tenantId: { S: 'TRAD#tenant1' },
             defaultTranslationLanguage: { S: 'en' }
-          },{
+        },{
             listAvailableLanguages: { L: [ {S: 'en'}, {S: 'it'} ] },
             tenantId: { S: 'TRAD#tenant1' },
             defaultTranslationLanguage: { S: 'en' }
-          }]
+        }]
     })
     .on(ScanCommand, {
         TableName: environment.dynamo.translations.tableName,
@@ -360,7 +391,7 @@ export function setupMock_getTenantByToken (ddbMock: any) {
             
             tenantId: { S: 'TRAD#tenant1' },
             defaultTranslationLanguage: { S: 'en' }
-          }]
+        }]
     });
 }
 
@@ -373,5 +404,76 @@ export function setupMock_deleteTenant (ddbMock: any) {
     })
     .resolves({
 
+    });
+}
+
+export function setupMock_getUser (ddbMock: any) {
+    ddbMock.on(GetCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        Key: {
+            tenantId: 'TRAD#tenant1',
+            keySort: 'USER#email@email.com'
+        },
+        ProjectionExpression: 'tenantId',
+        ExpressionAttributeNames: undefined
+    }).resolves({
+        Item: {
+        tenantId: "TRAD#tenant1",
+    }});
+}
+
+export function setupMock_getUserError (ddbMock: any) {
+    ddbMock.on(GetCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        Key: {
+            tenantId: 'TRAD#tenant1',
+            keySort: 'USER#email@email.com'
+        },
+        ProjectionExpression: 'tenantId',
+        ExpressionAttributeNames: undefined
+    }).resolves(undefined);
+}
+
+export function setupMock_getTenant5Translations (ddbMock: any) {
+    ddbMock
+    .on(GetCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        Key: {
+            tenantId: "TRAD#tenant1",
+            keySort: "TENANT#tenant1",
+        },
+    }).resolves({
+        "Item": {
+            "tenantId": "TRAD#tenant1",
+            "keySort": "TENANT#tenant1",
+            "tenantName": "tenant1",
+            "numberTranslationAvailable": 5,
+            "defaultTranslationLanguage": "en",
+            "listAvailableLanguages": [
+                "en",
+                "it"
+            ],
+            "token": "",
+        }
+    });
+}
+
+export function setupMock_getAll5Translations (ddbMock: any) {
+    ddbMock
+    .on(QueryCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        ProjectionExpression: "translationKey, defaultTranslationLanguage, defaultTranslationinLanguage, published, creationDate",
+        KeyConditionExpression: "#tenantId = :pk and begins_with(#keySort, :sk)",
+        ExpressionAttributeNames: {
+            "#tenantId": "tenantId",
+            "#keySort": "keySort"
+        },
+        ExpressionAttributeValues: {
+            ":pk": "TRAD#tenant1",
+            ":sk": "TRAD#tenant1"
+        }
+    })
+    .resolves({
+        Items: [{},{},{},{},{}]
     });
 }

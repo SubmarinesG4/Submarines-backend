@@ -10,6 +10,7 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 };
 
 export async function logic (body: any, pathParameters: any) {
+	const dataCreazione: string = new Date().toString();
 	let newTranslation: Translation = {
 		tenantId: "TRAD#" + pathParameters.tenantId,
 		keySort: "TRAD#" + pathParameters.tenantId + "#" + pathParameters.translationKey,
@@ -17,8 +18,8 @@ export async function logic (body: any, pathParameters: any) {
 		defaultTranslationLanguage: body.defaultTranslationLanguage,
 		defaultTranslationinLanguage: body.defaultTranslationinLanguage,
 		translations: body.translations,
-		creationDate: new Date().toISOString(),
-		modificationDate: new Date().toISOString(),
+		creationDate: dataCreazione,
+		modificationDate: dataCreazione,
 		modifiedbyUser: body.modifiedbyUser,
 		published: body.published,
 		versionedTranslations: []
@@ -68,7 +69,7 @@ export async function logic (body: any, pathParameters: any) {
 		}
 
 	} catch (e) {
-		return formatJSONResponse({ error: e }, e.statusCode);
+		return formatJSONResponse({error: "Tenant not found"}, 400);
 	}
 
 	//* Controlla se esiste l'utente
