@@ -11,44 +11,54 @@ const authorizer = (
 	handler: (event: any, context: any, callback: any) => void,
 	scopes: UseType[]
 ) => {
-		return async (event, context, callback) => {
+	return async (event, context, callback) => {
 
-			const attributes = event.requestContext.authorizer.claims;
-			const authAttributes: AuthAttributes = {
-				userType: attributes["cognito:groups"],
-				userMail: attributes.email,
-			};
-			event.attributes = authAttributes.userType;
+		const attributes = event.requestContext.authorizer.claims;
+		if (!attributes) return formatJSONResponse(
+			{
+				message: "User has not got the required role for this action",
+			},
+			403
+		);
+		const authAttributes: AuthAttributes = {
+			userType: attributes["cognito:groups"],
+			userMail: attributes.email,
+		};
+		event.attributes = authAttributes.userType;
 
-			var flag: boolean = false;
-			for (const scope of scopes) {
-				if (authAttributes.userType == scope)
-					flag = true;
-			}
+		var flag: boolean = false;
+		for (const scope of scopes) {
+			if (Array.isArray(authAttributes.userType) ? authAttributes.userType.includes(scope) : attributes.userType === scope)
+				flag = true;
+		}
+		
+		if (!flag)
+			return formatJSONResponse(
+				{
+					message: "User has not got the required role for this action",
+				},
+				403
+			);
+		else {
+			return handler(event, context, callback);
+		}
 
-			if (!flag)
-				return formatJSONResponse(
-					{
-						message: "User has not got the required role for this action",
-					},
-					403
-				);
-			else {
-				return handler(event, context, callback);
-			}
-
-			/*
-			if (event.headers['authorization'] !== "Bearer test")
-				return formatJSONResponse(
-					{
-						message: "User has not got the required role for this action",
-					},
-					403
-				);
-			else {
-				return handler(event, context, callback);
-			}*/
+		/*
+		if (event.headers['authorization'] !== "Bearer test")
+			return formatJSONResponse(
+				{
+					message: "User has not got the required role for this action",
+				},
+				403
+			);
+		else {
+			return handler(event, context, callback);
+		}*/
 	};
 };
 
-export { AuthAttributes, authorizer, UseType };
+function testAuth(auth: any, pathParameters: any){
+	return auth["custom:tenantId"] == pathParameters.tenantId;	
+}
+
+export { AuthAttributes, authorizer, UseType, testAuth };

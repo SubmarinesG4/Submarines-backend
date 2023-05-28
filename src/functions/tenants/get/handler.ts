@@ -1,11 +1,19 @@
 import { ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { authorizer } from "src/middleware/validators";
+import { authorizer, testAuth } from "src/middleware/validators";
 import { DynamoDBHandler } from "src/services/dynamoDBHandler";
 import schema from "./schema";
 
 const getTenant: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	return await logic(event.pathParameters);
+	if(testAuth(event.requestContext.authorizer.claims,event.pathParameters))
+		return await logic(event.pathParameters);
+	else
+		return formatJSONResponse(
+			{
+				message: "User has not got the required role for this action",
+			},
+			403
+		);
 };
 
 export async function logic(pathParameters: any) {
