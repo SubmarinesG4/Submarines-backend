@@ -8,8 +8,8 @@ import { User } from 'src/types/User';
 
 
 const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	if(testAuth(event.requestContext.authorizer.claims,event.pathParameters))
-    	return await logic (event.body, event.pathParameters, event.requestContext);
+	if (testAuth(event.requestContext.authorizer.claims, event.pathParameters) || event.userRoles.includes("super-admin"))
+		return await logic(event.body, event.pathParameters, event.requestContext);
 	else
 		return formatJSONResponse(
 			{
@@ -19,7 +19,7 @@ const inviteUser: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (eve
 		);
 };
 
-export async function logic (body: any, pathParameters: any, requestContext: any) {
+export async function logic(body: any, pathParameters: any, requestContext: any) {
 	const dynamo = DynamoDBHandler.getInstance();
 	const cognito = CognitoHandler.getInstance();
 
@@ -39,7 +39,7 @@ export async function logic (body: any, pathParameters: any, requestContext: any
 	}
 
 	//* Check only superadmin can create superadmin
-	if(body.role == "super-admin" && requestContext.authorizer.claims["cognito:groups"][0] != "super-admin"){
+	if (body.role == "super-admin" && requestContext.authorizer.claims["cognito:groups"][0] != "super-admin") {
 		return formatJSONResponse(
 			{ error: "Only superadmin can create superadmin", }, 400
 		);
@@ -69,7 +69,7 @@ export async function logic (body: any, pathParameters: any, requestContext: any
 		}
 	} catch (e) {
 		console.log("ERROR TRYING TO GET ITEM");
-		console.log(e);	
+		console.log(e);
 	}
 
 	try {
@@ -102,7 +102,7 @@ export async function logic (body: any, pathParameters: any, requestContext: any
 	}
 
 	return formatJSONResponse(
-		{ 
+		{
 			userEmail: newUser.userEmail,
 			username: newUser.username,
 			name: newUser.name,

@@ -29,6 +29,7 @@ const serverlessConfiguration: AWS = {
 	provider: {
 		name: 'aws',
 		runtime: 'nodejs14.x',
+		region: environment.awsRegion,
 		apiGateway: {
 			minimumCompressionSize: 1024,
 			shouldStartNameWithService: true,
@@ -37,11 +38,7 @@ const serverlessConfiguration: AWS = {
 			AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
 			NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
 		},
-		vpc: {
-			securityGroupIds: environment.lambda.securityGroupIds,
-			subnetIds: environment.lambda.subnets,
-		},
-		iam: {
+		/* iam: {
 			role: {
 				statements: [
 					{
@@ -63,7 +60,7 @@ const serverlessConfiguration: AWS = {
 					},
 				],
 			},
-		},
+		}, */
 	},
 	resources: {
 		Resources: {
@@ -78,7 +75,7 @@ const serverlessConfiguration: AWS = {
 					}, {
 						AttributeName: 'keySort',
 						AttributeType: 'S',
-					},{
+					}, {
 						AttributeName: 'nomeTenant',
 						AttributeType: 'S',
 					}],
@@ -88,26 +85,26 @@ const serverlessConfiguration: AWS = {
 					}, {
 						AttributeName: 'keySort',
 						KeyType: 'RANGE',
-					}],
-					GlobalSecondaryIndexes: [{
-						IndexName: 'keySortIndex', //! TO GET ALL TENANTS
-						KeySchema: [{
-							AttributeName: 'keySort',
-							KeyType: 'HASH',
-						}, {
-							AttributeName: 'nomeTenant',
-							KeyType: 'RANGE',
-						}],
-						Projection: {
-							ProjectionType: 'ALL',
-						}
 					}]
 				},
 			},
 		}
 	},
-	// import the function via paths
-	functions: { translationGet, translationPut, translationGetAll, tenantPut, getTenant, inviteUser, deleteUser, deleteTenant, tenantsGetAll, translationDelete, libraryGet, updateTenant, getLibraryTenantLanguages, },
+	functions: {
+		translationGet,
+		translationPut,
+		translationGetAll,
+		tenantPut,
+		getTenant,
+		inviteUser,
+		deleteUser,
+		deleteTenant,
+		tenantsGetAll,
+		translationDelete,
+		libraryGet,
+		updateTenant,
+		getLibraryTenantLanguages,
+	},
 	package: { individually: true },
 	custom: {
 		esbuild: {

@@ -5,16 +5,8 @@ import { CognitoHandler } from 'src/services/cognitoHandler';
 import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 import schema from './schema';
 
-const tenantDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema>  = async (event) => {
-	if(testAuth(event.requestContext.authorizer.claims,event.pathParameters))
-		return await logic(event.pathParameters);
-	else
-		return formatJSONResponse(
-			{
-				message: "User has not got the required role for this action",
-			},
-			403
-		);
+const tenantDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+	return await logic(event.pathParameters);
 };
 
 export async function logic(pathParameters: any) {
@@ -33,8 +25,8 @@ export async function logic(pathParameters: any) {
 		});
 
 		await dynamo.deleteTenantItems("TRAD#" + pathParameters.tenantId);
-		await dynamo.deleteItem("TRAD#" + pathParameters.tenantId, "TENANT#"+ pathParameters.tenantId);
-		
+		await dynamo.deleteItem("TRAD#" + pathParameters.tenantId, "TENANT#" + pathParameters.tenantId);
+
 		return formatJSONResponse({}, 200);
 	} catch (e) {
 		return formatJSONResponse(

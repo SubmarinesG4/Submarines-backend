@@ -5,7 +5,7 @@ import { DynamoDBHandler } from "src/services/dynamoDBHandler";
 import schema from "./schema";
 
 const translationGet: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	if(testAuth(event.requestContext.authorizer.claims,event.pathParameters))
+	if (testAuth(event.requestContext.authorizer.claims, event.pathParameters) || event.userRoles.includes("super-admin"))
 		return await logic(event.pathParameters);
 	else
 		return formatJSONResponse(
@@ -16,7 +16,7 @@ const translationGet: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		);
 };
 
-export async function logic (pathParameters: any) {
+export async function logic(pathParameters: any) {
 	const tenantId = pathParameters.tenantId as string;
 	const translationKey = pathParameters.translationKey as string;
 
@@ -25,7 +25,7 @@ export async function logic (pathParameters: any) {
 	try {
 		const translation = await dynamo.getItem("TRAD#" + tenantId, "TRAD#" + tenantId + "#" + translationKey, "defaultTranslationLanguage, defaultTranslationinLanguage, translations, creationDate, modificationDate, modifiedbyUser, published, versionedTranslations, translationKey");
 		if (!translation) {
-			return formatJSONResponse({error: "Tenant not found"}, 404);
+			return formatJSONResponse({ error: "Translation not found" }, 404);
 		}
 		return formatJSONResponse(translation, 200);
 	} catch (error) {

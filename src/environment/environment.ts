@@ -48,11 +48,11 @@ interface Environment {
 }
 
 const environment: Environment = {
-	awsRegion: "eu-west-2",
+	awsRegion: "eu-central-1",
 	dynamo: {
 		translations: {
 			tableName: "translations",
-			arn: "translations",
+			arn: process.env.DYNAMO_TRANSLATIONS_ARN,
 		},
 	},
 	lambda: {
@@ -62,10 +62,8 @@ const environment: Environment = {
 		securityGroupIds: [],
 	},
 	cognito: {
-		userPoolArn: "arn:aws:cognito-idp:eu-central-1:305234046968:userpool/eu-central-1_OcyZlYZEj",
+		userPoolArn: process.env.COGNITO_ARN
 	},
 };
-
-// https://pokeapi.co/
 
 export { environment, Environment };

@@ -5,7 +5,7 @@ import { DynamoDBHandler } from "src/services/dynamoDBHandler";
 import schema from "./schema";
 
 const getTenant: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	if(testAuth(event.requestContext.authorizer.claims,event.pathParameters))
+	if (testAuth(event.requestContext.authorizer.claims, event.pathParameters) || event.userRoles.includes("super-admin"))
 		return await logic(event.pathParameters);
 	else
 		return formatJSONResponse(
@@ -43,7 +43,7 @@ export async function logic(pathParameters: any) {
 	}
 
 	//* CREATE AND RETURN OBJECT
-	return formatJSONResponse (
+	return formatJSONResponse(
 		{
 			tenantName: response.tenantName,
 			numberTranslationAvailable: response.numberTranslationAvailable,

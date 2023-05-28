@@ -5,7 +5,7 @@ import schema from './schema';
 import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 const translationDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	if(testAuth(event.requestContext.authorizer.claims,event.pathParameters))
+	if (testAuth(event.requestContext.authorizer.claims, event.pathParameters) || event.userRoles.includes("super-admin"))
 		return await logic(event.pathParameters);
 	else
 		return formatJSONResponse(
@@ -16,7 +16,7 @@ const translationDelete: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
 		);
 };
 
-export async function logic (pathParameters: any) {
+export async function logic(pathParameters: any) {
 	const dynamo = DynamoDBHandler.getInstance();
 
 	const tenantId = pathParameters.tenantId;
@@ -25,7 +25,7 @@ export async function logic (pathParameters: any) {
 	try {
 		const user = await dynamo.getItem("TRAD#" + tenantId, "TRAD#" + tenantId + "#" + translationKey, "tenantId");
 		if (!user) {
-			return formatJSONResponse({ error: "Tenant not found"}, 404);
+			return formatJSONResponse({ error: "Tenant not found" }, 404);
 		}
 		await dynamo.deleteItem("TRAD#" + tenantId, "TRAD#" + tenantId + "#" + translationKey);
 		return formatJSONResponse({}, 200);

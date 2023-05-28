@@ -12,7 +12,6 @@ const authorizer = (
 	scopes: UseType[]
 ) => {
 	return async (event, context, callback) => {
-
 		const attributes = event.requestContext.authorizer.claims;
 		if (!attributes) return formatJSONResponse(
 			{
@@ -24,14 +23,14 @@ const authorizer = (
 			userType: attributes["cognito:groups"],
 			userMail: attributes.email,
 		};
-		event.attributes = authAttributes.userType;
+		event.userRoles = authAttributes.userType;
 
 		var flag: boolean = false;
 		for (const scope of scopes) {
 			if (Array.isArray(authAttributes.userType) ? authAttributes.userType.includes(scope) : attributes.userType === scope)
 				flag = true;
 		}
-		
+
 		if (!flag)
 			return formatJSONResponse(
 				{
@@ -57,8 +56,8 @@ const authorizer = (
 	};
 };
 
-function testAuth(auth: any, pathParameters: any){
-	return auth["custom:tenantId"] == pathParameters.tenantId;	
+function testAuth(auth: any, pathParameters: any) {
+	return auth["custom:tenantId"] == pathParameters.tenantId;
 }
 
 export { AuthAttributes, authorizer, UseType, testAuth };

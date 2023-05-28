@@ -5,7 +5,7 @@ import { DynamoDBHandler } from "src/services/dynamoDBHandler";
 import schema from "./schema";
 
 const translationGetAll: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	if(testAuth(event.requestContext.authorizer.claims,event.pathParameters))
+	if (testAuth(event.requestContext.authorizer.claims, event.pathParameters) || event.userRoles.includes("super-admin"))
 		return logic(event.pathParameters, event.queryStringParameters);
 	else
 		return formatJSONResponse(
@@ -16,7 +16,7 @@ const translationGetAll: ValidatedEventAPIGatewayProxyEvent<typeof schema> = asy
 		);
 };
 
-export async function logic (pathParameters: any, queryStringParameters: any) {
+export async function logic(pathParameters: any, queryStringParameters: any) {
 	const tenantId: string = pathParameters.tenantId as string;
 	const dynamo = DynamoDBHandler.getInstance();
 
@@ -30,17 +30,17 @@ export async function logic (pathParameters: any, queryStringParameters: any) {
 				return formatJSONResponse(
 					{ error: "published must be true or false" }, 400
 				);
-			
+
 			translations = await dynamo.getScannedTranslations("TRAD#" + tenantId, queryStringParameters);
 
-		}  else {
+		} else {
 			translations = await dynamo.getAllTranslations("TRAD#" + tenantId);
 		}
 
 		return formatJSONResponse(
 			{ translations }, 200
 		);
-	} catch	(error) {
+	} catch (error) {
 		return formatJSONResponse(
 			error, error.statusCode
 		);

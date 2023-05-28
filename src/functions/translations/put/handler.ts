@@ -6,7 +6,7 @@ import schema from './schema';
 import { DynamoDBHandler } from 'src/services/dynamoDBHandler';
 
 const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
-	if(testAuth(event.requestContext.authorizer.claims,event.pathParameters))
+	if (testAuth(event.requestContext.authorizer.claims, event.pathParameters) || event.userRoles.includes("super-admin"))
 		return await logic(event.body, event.pathParameters);
 	else
 		return formatJSONResponse(
@@ -17,8 +17,8 @@ const tranlsationPut: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async 
 		);
 };
 
-export async function logic (body: any, pathParameters: any) {
-	const dataCreazione: string = new Date().toString();
+export async function logic(body: any, pathParameters: any) {
+	const dataCreazione: string = new Date().toISOString();
 	let newTranslation: Translation = {
 		tenantId: "TRAD#" + pathParameters.tenantId,
 		keySort: "TRAD#" + pathParameters.tenantId + "#" + pathParameters.translationKey,
@@ -41,7 +41,7 @@ export async function logic (body: any, pathParameters: any) {
 
 	//* Controlla che ci sia la lingua di default in translations
 	var flag = false;
-	for (var i=0; i<newTranslation.translations.length; i++)
+	for (var i = 0; i < newTranslation.translations.length; i++)
 		if (newTranslation.translations[i].language == newTranslation.defaultTranslationLanguage)
 			flag = true;
 	if (!flag)
@@ -49,7 +49,7 @@ export async function logic (body: any, pathParameters: any) {
 
 	//* Controllare che non ci siano duplicati di language dentro translations
 	var languages: Array<string> = [];
-	for (var i=0; i<newTranslation.translations.length; i++)
+	for (var i = 0; i < newTranslation.translations.length; i++)
 		languages.push(newTranslation.translations[i].language);
 	if ((new Set(languages)).size !== languages.length)
 		return formatJSONResponse({ error: "translations must not contain duplicates" }, 400);
@@ -70,14 +70,14 @@ export async function logic (body: any, pathParameters: any) {
 			return formatJSONResponse({ error: "Tenant not found" }, 400);
 		if (tenant.defaultTranslationLanguage != newTranslation.defaultTranslationLanguage)
 			return formatJSONResponse({ error: "DefaultTranslationLanguage is not correct" }, 400);
-		for (var i=0; i<newTranslation.translations.length; i++) {
+		for (var i = 0; i < newTranslation.translations.length; i++) {
 			if (!tenant.listAvailableLanguages.includes(newTranslation.translations[i].language)) {
 				return formatJSONResponse({ error: "Language " + newTranslation.translations[i].language + " is not available" }, 400);
 			}
 		}
 
 	} catch (e) {
-		return formatJSONResponse({error: "Tenant not found"}, 400);
+		return formatJSONResponse({ error: "Tenant not found" }, 400);
 	}
 
 	//* Controlla se esiste l'utente
@@ -115,7 +115,7 @@ export async function logic (body: any, pathParameters: any) {
 		return formatJSONResponse({ error: e }, e.statusCode);
 	}
 
-	return formatJSONResponse({ 
+	return formatJSONResponse({
 		translationKey: newTranslation.translationKey,
 		defaultTranslationLanguage: newTranslation.defaultTranslationLanguage,
 		defaultTranslationinLanguage: newTranslation.defaultTranslationinLanguage,
