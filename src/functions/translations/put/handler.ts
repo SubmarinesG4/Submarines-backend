@@ -28,7 +28,7 @@ export async function logic(body: any, pathParameters: any, userEmail: string, i
 		translations: body.translations,
 		creationDate: dataCreazione,
 		modificationDate: dataCreazione,
-		modifiedbyUser: body.modifiedbyUser,
+		modifiedbyUser: userEmail,
 		published: body.published,
 		versionedTranslations: []
 	}
