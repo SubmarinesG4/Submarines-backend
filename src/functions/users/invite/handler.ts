@@ -52,9 +52,8 @@ export async function logic (body: any, pathParameters: any, requestContext: any
 
 	//* Check if user already exists
 	try {
-		const user = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "USER#" + body.emailUtente, "tenantId");
+		const user = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "USER#" + body.userEmail, "tenantId");
 		const cognitoUser: any = await cognito.getUser(body.username);
-		console.log("cognitoUser: "+cognitoUser);
 		if (user || cognitoUser) {
 			return formatJSONResponse(
 				{ error: "User already exists", }, 400
