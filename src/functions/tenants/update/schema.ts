@@ -10,5 +10,9 @@ export default {
 			}
 		}
 	},
-	required: [],
+	required: [
+		"numberTranslationAvailable",
+		"defaultTranslationLanguage",
+		"listAvailableLanguages"
+	],
 } as const;

@@ -41,9 +41,9 @@ export async function logic(pathParameters: any) {
 		const list = await dynamo.getAllTranslations(tenant.tenantId, "translations, published, translationKey")
 		const translations: Map<string, string> = new Map();
 
-		for (var i=0; i<list.length; i++) {
+		for (var i = 0; i < list.length; i++) {
 			if (list[i].published == true) {
-				for (var j=0; j<list[i].translations.length; j++) {
+				for (var j = 0; j < list[i].translations.length; j++) {
 					if (list[i].translations[j].language == language) {
 						translations[list[i].translationKey] = list[i].translations[j].content;
 					}
@@ -52,7 +52,7 @@ export async function logic(pathParameters: any) {
 		}
 
 		return formatJSONResponse(
-			{ 
+			{
 				translations
 			}, 200
 		);
@@ -64,5 +64,5 @@ export async function logic(pathParameters: any) {
 };
 
 export const main = middyfy(
-	authorizer(translationGetAll, ["super-admin", "admin", "traduttore"])
+	translationGetAll
 );

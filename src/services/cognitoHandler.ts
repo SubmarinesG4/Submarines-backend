@@ -2,7 +2,6 @@ import AWS from 'aws-sdk';
 require('dotenv').config()
 
 export class CognitoHandler {
-
 	private static instance: CognitoHandler;
 	private cognito: AWS.CognitoIdentityServiceProvider;
 
@@ -21,7 +20,7 @@ export class CognitoHandler {
 		return this.instance;
 	}
 
-	createUser(email: string, name: string, surname: string, tenantId: string) {
+	async createUser(email: string, name: string, surname: string, tenantId: string, role: string) {
 		const params = {
 			UserPoolId: "eu-central-1_OcyZlYZEj",
 			Username: email,
@@ -44,23 +43,17 @@ export class CognitoHandler {
 				}
 			]
 		};
-		this.cognito.adminCreateUser(params, function (err) {
-			if (err) {
-				console.log('err:', err);
-				throw err;
-			}
-		});
+		await this.cognito.adminCreateUser(params).promise();
+		return await this.addUserToGroup(email, role)
 	}
 
-	addUserToGroup(email: string, group: string) {
+	async addUserToGroup(email: string, group: string) {
 		var params = {
 			GroupName: group,
 			UserPoolId: "eu-central-1_OcyZlYZEj",
 			Username: email
 		};
-		this.cognito.adminAddUserToGroup(params, function (err) {
-			if (err) console.log(err, err.stack); // an error occurred
-		});
+		return await this.cognito.adminAddUserToGroup(params).promise();
 	}
 
 	deleteUser(username: string) {

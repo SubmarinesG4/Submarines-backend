@@ -37,7 +37,7 @@ export async function logic(pathParameters: any) {
 		}
 
 		return formatJSONResponse(
-			{ 
+			{
 				defaultLanguage: tenant.defaultTranslationLanguage,
 				languages: tenant.listAvailableLanguages
 			}, 200
@@ -49,5 +49,5 @@ export async function logic(pathParameters: any) {
 }
 
 export const main = middyfy(
-	authorizer(getLibraryTenantLanguages, ["super-admin", "admin", "traduttore"])
+	getLibraryTenantLanguages
 );

@@ -38,7 +38,7 @@ const serverlessConfiguration: AWS = {
 			AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
 			NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
 		},
-		/* iam: {
+		iam: {
 			role: {
 				statements: [
 					{
@@ -53,14 +53,19 @@ const serverlessConfiguration: AWS = {
 							"dynamodb:PutItem",
 							"dynamodb:UpdateItem",
 							"dynamodb:Scan",
+							"cognito-idp:AdminCreateUser",
+							"cognito-idp:AdminAddUserToGroup",
+							"cognito-idp:AdminDeleteUser",
+							"cognito-idp:AdminGetUser",
 						],
 						Resource: [
+							environment.cognito.userPoolArn,
 							environment.dynamo.translations.arn,
 						],
 					},
 				],
 			},
-		}, */
+		},
 	},
 	resources: {
 		Resources: {
@@ -74,9 +79,6 @@ const serverlessConfiguration: AWS = {
 						AttributeType: 'S',
 					}, {
 						AttributeName: 'keySort',
-						AttributeType: 'S',
-					}, {
-						AttributeName: 'nomeTenant',
 						AttributeType: 'S',
 					}],
 					KeySchema: [{
@@ -116,12 +118,6 @@ const serverlessConfiguration: AWS = {
 			define: { 'require.resolve': undefined },
 			platform: 'node',
 			concurrency: 10,
-		},
-		dynamodb: {
-			stages: ['dev'],
-			start: {
-				migrate: true,
-			},
 		},
 	},
 };

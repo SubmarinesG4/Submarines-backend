@@ -27,8 +27,10 @@ const authorizer = (
 
 		var flag: boolean = false;
 		for (const scope of scopes) {
-			if (Array.isArray(authAttributes.userType) ? authAttributes.userType.includes(scope) : attributes.userType === scope)
-				flag = true;
+			if (authAttributes.userType.split(",").includes(scope)) {
+				flag = true
+				break;
+			}
 		}
 
 		if (!flag)

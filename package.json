@@ -17,6 +17,7 @@
 		"@aws-sdk/credential-provider-node": "^3.332.0",
 		"@aws-sdk/lib-dynamodb": "^3.264.0",
 		"@middy/core": "^3.4.0",
+		"@middy/http-cors": "^4.4.3",
 		"@middy/http-json-body-parser": "^3.4.0",
 		"amazon-cognito-identity-js": "^6.2.0",
 		"aws-jwt-verify": "^4.0.0",

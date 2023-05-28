@@ -6,7 +6,8 @@ export default {
 		{
 			http: {
 				method: "get",
-				path: "translations/{token}",
+				path: "translations/details/{token}",
+				cors: true,
 			},
 		},
 	],

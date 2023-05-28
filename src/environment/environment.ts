@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 interface Environment {
 	awsRegion:
 	| "us-east-1"
@@ -52,7 +54,7 @@ const environment: Environment = {
 	dynamo: {
 		translations: {
 			tableName: "translations",
-			arn: process.env.DYNAMO_TRANSLATIONS_ARN,
+			arn: process.env.DYNAMO_TRANSLATIONS_ARN
 		},
 	},
 	lambda: {
