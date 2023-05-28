@@ -37,7 +37,7 @@ describe('Put translation', function () {
         setupMock_getTranslationError(ddbMock);
         setupMock_getTenantTranslations(ddbMock);
         setupMock_putItem(ddbMock);
-        const result: any = await logic(body201, pathParameters200);
+        const result: any = await logic(body201, pathParameters200, "email", false);
 
         //* Imposto la data a quella corretta visto che non posso sapere quando verrà eseguito il test
         const jsonBody = JSON.parse(result.body);
@@ -69,7 +69,7 @@ describe('Put translation', function () {
         setupMock_getTenantTranslations(ddbMock);
         setupMock_putItem(ddbMock);
 
-        const result: any = await logic(body200, pathParameters200);
+        const result: any = await logic(body200, pathParameters200, "email", false);
 
         const jsonBody = JSON.parse(result.body);
         response200.creationDate = jsonBody.creationDate;
@@ -92,7 +92,7 @@ describe('Put translation', function () {
         setupMock_getTranslationError(ddbMock);
         setupMock_getTenantTranslations(ddbMock);
         setupMock_putItem(ddbMock);
-        const result = await logic(body400DefLangNotInList, pathParameters200);
+        const result = await logic(body400DefLangNotInList, pathParameters200, "email", false);
         expect(JSON.parse(result.body)).toEqual({ error: "defaultTranslationLanguage must be in translations" });
         expect(result.statusCode).toEqual(400);
     })
@@ -108,7 +108,7 @@ describe('Put translation', function () {
         setupMock_getTranslationError(ddbMock);
         setupMock_getTenantTranslations(ddbMock);
         setupMock_putItem(ddbMock);
-        const result = await logic(body400DuplicatesInTranslations, pathParameters200);
+        const result = await logic(body400DuplicatesInTranslations, pathParameters200, "email", false);
         expect(JSON.parse(result.body)).toEqual({ error: "translations must not contain duplicates" });
         expect(result.statusCode).toEqual(400);
     });
@@ -119,7 +119,7 @@ describe('Put translation', function () {
         setupMock_getTranslationError(ddbMock);
         setupMock_getTenantTranslations(ddbMock);
         setupMock_putItem(ddbMock);
-        const result = await logic(body201, pathParameters200);
+        const result = await logic(body201, pathParameters200, "email", false);
         expect(JSON.parse(result.body)).toEqual({ error: "Tenant not found" });
         expect(result.statusCode).toEqual(400);
     });
@@ -135,7 +135,7 @@ describe('Put translation', function () {
         setupMock_getTranslationError(ddbMock);
         setupMock_getTenantTranslations(ddbMock);
         setupMock_putItem(ddbMock);
-        const result: any = await logic(body400DefLangNotOk, pathParameters200);
+        const result: any = await logic(body400DefLangNotOk, pathParameters200, "email", false);
         expect(JSON.parse(result.body)).toEqual({ error: "DefaultTranslationLanguage is not correct" });
         expect(result.statusCode).toEqual(400);
     });
@@ -151,7 +151,7 @@ describe('Put translation', function () {
         setupMock_getTranslationError(ddbMock);
         setupMock_getTenantTranslations(ddbMock);
         setupMock_putItem(ddbMock);
-        const result: any = await logic(body400LangNotAvailable, pathParameters200);
+        const result: any = await logic(body400LangNotAvailable, pathParameters200, "email", false);
         expect(JSON.parse(result.body)).toEqual({ error: "Language fr is not available" });
         expect(result.statusCode).toEqual(400);
     });
@@ -162,7 +162,7 @@ describe('Put translation', function () {
         setupMock_getTranslationError(ddbMock);
         setupMock_getTenantTranslations(ddbMock);
         setupMock_putItem(ddbMock);
-        const result: any = await logic(body201, pathParameters200);
+        const result: any = await logic(body201, pathParameters200, "email", false);
         expect(JSON.parse(result.body)).toEqual({ error: "User not found" });
         expect(result.statusCode).toEqual(400);
     });
@@ -177,7 +177,7 @@ describe('Put translation', function () {
         setupMock_getUser(ddbMock);
         setupMock_getTranslationError(ddbMock);
         setupMock_getAll5Translations(ddbMock);
-        const result: any = await logic(body201, pathParameters400ManyTransl);
+        const result: any = await logic(body201, pathParameters400ManyTransl, "email", false);
 
         expect(JSON.parse(result.body)).toEqual({ error: "Translation limit reached" });
         expect(result.statusCode).toEqual(400);

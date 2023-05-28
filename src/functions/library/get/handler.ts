@@ -1,6 +1,5 @@
 import { ValidatedEventAPIGatewayProxyEvent, formatJSONResponse } from "@libs/api-gateway";
 import { middyfy } from "@libs/lambda";
-import { authorizer } from "src/middleware/validators";
 import { DynamoDBHandler } from "src/services/dynamoDBHandler";
 import schema from "./schema";
 
