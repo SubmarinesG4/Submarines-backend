@@ -19,7 +19,7 @@ export async function logic (body: any, pathParameters: any) {
 		user = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "USER#" + body.username, "tenantId");
 		const cognitoUser: any = await cognito.getUser(body.username);
 		if (!user || !cognitoUser) {
-			return formatJSONResponse({}, 404);
+			return formatJSONResponse({error: "User not found"}, 404);
 		}
 		cognito.deleteUser(body.username);
 		await dynamo.deleteItem("TRAD#" + pathParameters.tenantId, "USER#" + body.username);

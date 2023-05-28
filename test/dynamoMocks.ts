@@ -477,3 +477,13 @@ export function setupMock_getAll5Translations (ddbMock: any) {
         Items: [{},{},{},{},{}]
     });
 }
+
+export function setupMock_deleteUser(ddbMock: any) {
+    ddbMock.on(DeleteCommand, {
+        TableName: environment.dynamo.translations.tableName,
+        Key: {
+            tenantId: "TRAD#tenant1",
+            keySort: "USER#email@email.com",
+        },
+    }).resolves({})
+}
