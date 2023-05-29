@@ -54,7 +54,6 @@ export async function logic(body: any, pathParameters: any, requestContext: any)
 			);
 		}
 	} catch (e) {
-		console.log("ERROR TRYING TO GET ITEM");
 		console.log(e);
 	}
 
@@ -68,7 +67,6 @@ export async function logic(body: any, pathParameters: any, requestContext: any)
 			);
 		}
 	} catch (e) {
-		console.log("ERROR TRYING TO GET ITEM");
 		console.log(e);
 	}
 
