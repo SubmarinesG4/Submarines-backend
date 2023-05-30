@@ -30,7 +30,7 @@ export async function logic(pathParameters: any) {
 		}
 	} catch (error) {
 		return formatJSONResponse(
-			{ error }, error.statusCode
+			{ error }, 500
 		);
 	}
 
@@ -40,6 +40,9 @@ export async function logic(pathParameters: any) {
 		users = await dynamo.getTenantUsers("TRAD#" + tenantId);
 	} catch (error) {
 		console.log("Error", error.stack);
+		return formatJSONResponse(
+			{ error }, 500
+		);
 	}
 
 	//* CREATE AND RETURN OBJECT

@@ -88,7 +88,7 @@ export async function logic(body: any, pathParameters: any, userEmail: string, i
 				return formatJSONResponse({ error: "User not found" }, 400);
 			}
 		} catch (e) {
-			return formatJSONResponse({ error: e }, e.statusCode);
+			return formatJSONResponse({ error: e }, 500);
 		}
 	}
 
@@ -113,7 +113,7 @@ export async function logic(body: any, pathParameters: any, userEmail: string, i
 
 		await dynamo.putItem(newTranslation);
 	} catch (e) {
-		return formatJSONResponse({ error: e }, e.statusCode);
+		return formatJSONResponse({ error: e }, 500);
 	}
 
 	return formatJSONResponse({

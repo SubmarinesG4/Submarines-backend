@@ -25,7 +25,7 @@ export async function logic(queryStringParameters: any) {
 		);
 	} catch (error) {
 		return formatJSONResponse(
-			{ error, }, error.statusCode
+			{ error, }, 500
 		);
 	}
 }

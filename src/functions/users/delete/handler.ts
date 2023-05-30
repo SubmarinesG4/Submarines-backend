@@ -33,7 +33,7 @@ export async function logic(body: any, pathParameters: any) {
 		await dynamo.deleteItem("TRAD#" + pathParameters.tenantId, "USER#" + body.username);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e, }, 400
+			{ error: e, }, 500
 		);
 	}
 

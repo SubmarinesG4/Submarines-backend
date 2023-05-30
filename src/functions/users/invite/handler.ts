@@ -55,6 +55,9 @@ export async function logic(body: any, pathParameters: any, requestContext: any)
 		}
 	} catch (e) {
 		console.log(e);
+		return formatJSONResponse(
+			{ error: e, }, 500
+		);
 	}
 
 	//* Check if user already exists
@@ -68,6 +71,9 @@ export async function logic(body: any, pathParameters: any, requestContext: any)
 		}
 	} catch (e) {
 		console.log(e);
+		return formatJSONResponse(
+			{ error: e, }, 500
+		);
 	}
 
 	try {
@@ -94,7 +100,7 @@ export async function logic(body: any, pathParameters: any, requestContext: any)
 	} catch (e) {
 		cognito.deleteUser(body.username); 		//? Se l'utente non si salva nel DB lo tolgo anche da Cognito
 		return formatJSONResponse(
-			{ error: e, }, 400
+			{ error: e, }, 500
 		);
 	}
 

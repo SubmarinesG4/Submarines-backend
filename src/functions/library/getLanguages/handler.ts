@@ -42,8 +42,10 @@ export async function logic(pathParameters: any) {
 			}, 200
 		);
 	} catch (e) {
-		//console.log(e);
-		throw e;
+		console.log(e);
+		return formatJSONResponse(
+			{}, 500
+		);
 	}
 }
 

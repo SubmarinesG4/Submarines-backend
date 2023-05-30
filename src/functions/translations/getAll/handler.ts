@@ -42,7 +42,7 @@ export async function logic(pathParameters: any, queryStringParameters: any) {
 		);
 	} catch (error) {
 		return formatJSONResponse(
-			error, error.statusCode
+			error, 500
 		);
 	}
 }

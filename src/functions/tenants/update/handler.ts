@@ -22,7 +22,7 @@ export async function logic(body: any, pathParameters: any) {
 		old = await dynamo.getItem("TRAD#" + pathParameters.tenantId, "TENANT#" + pathParameters.tenantId, "tenantId, keySort, tenantName, numberTranslationAvailable, defaultTranslationLanguage, listAvailableLanguages, #tk", true);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e }, 400
+			{ e }, 500
 		);
 	}
 
@@ -57,7 +57,7 @@ export async function logic(body: any, pathParameters: any) {
 		await dynamo.putItem(old);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e, }, 400
+			{ error: e, }, 500
 		);
 	}
 

@@ -30,7 +30,7 @@ export async function logic(pathParameters: any) {
 		return formatJSONResponse(translation, 200);
 	} catch (error) {
 		return formatJSONResponse(
-			{ error }, error.statusCode
+			{ error }, 500
 		);
 	}
 }

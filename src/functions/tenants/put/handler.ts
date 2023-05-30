@@ -49,7 +49,7 @@ export async function logic(body: any, pathParameters: any) {
 		await dynamo.putItem(newTenant);
 	} catch (e) {
 		return formatJSONResponse(
-			{ error: e, }, e.statusCode
+			{ error: e, }, 500
 		);
 	}
 
